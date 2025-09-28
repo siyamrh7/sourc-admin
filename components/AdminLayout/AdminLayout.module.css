@@ -1,0 +1,32 @@
+.layout {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.container {
+  display: flex;
+  min-height: calc(100vh - 80px);
+  margin-top: 80px;
+}
+
+.main {
+  flex: 1;
+  margin-left: 280px;
+  padding: 2rem;
+  overflow-y: auto;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+    padding: 1rem;
+  }
+  
+  .container {
+    flex-direction: column;
+  }
+} 
