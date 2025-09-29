@@ -1,3 +1,4 @@
+/*
 .layout {
   min-height: 100vh;
   background: #f9fafb;
@@ -20,7 +21,7 @@
 }
 
 /* Mobile Styles */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .main {
     margin-left: 0;
     padding: 0rem;
@@ -29,4 +30,4 @@
   .container {
     flex-direction: column;
   }
-} 
+} */

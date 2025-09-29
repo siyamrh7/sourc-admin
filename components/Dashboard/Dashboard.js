@@ -1,3 +1,4 @@
+/*
 import styles from './Dashboard.module.css';
 import StatsCard from '../StatsCard/StatsCard';
 import OrderTable from '../OrderTable/OrderTable';
@@ -56,4 +57,5 @@ const Dashboard = ({ onViewOrderDetails }) => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;
+*/

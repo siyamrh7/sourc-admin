@@ -39,7 +39,7 @@
 }
 
 .adminBadge {
-  background: #dc2626;
+  background: #17d599;
   color: white;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
@@ -71,8 +71,8 @@
 }
 
 .switchButton {
-  background: #10b981;
-  color: white;
+  background: rgba(149, 225, 212, 1);
+  color: #000;
   text-decoration: none;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
@@ -82,7 +82,7 @@
 }
 
 .switchButton:hover {
-  background: #059669;
+  background: #17d599;
 }
 
 .mobileMenuButton {

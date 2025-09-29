@@ -33,7 +33,7 @@ const AdminDashboard = ({ onViewChange }) => {
     {
       title: 'Total Orders',
       value: String(dashboardStats.totals.totalOrders || orders.length || 0),
-      icon: '📦',
+      icon: 'icons/cube-01.svg',
       color: 'blue',
       trend: '+12%',
       trendDirection: 'up'
@@ -41,7 +41,7 @@ const AdminDashboard = ({ onViewChange }) => {
     {
       title: 'Active Orders',
       value: String((statusStats['In Progress'] || 0) + (statusStats['Development'] || 0) + (statusStats['Production'] || 0)),
-      icon: '🔄',
+      icon: 'icons/clock.svg',
       color: 'orange',
       trend: '+5%',
       trendDirection: 'up'
@@ -49,7 +49,7 @@ const AdminDashboard = ({ onViewChange }) => {
     {
       title: 'Completed Orders',
       value: String(statusStats['Delivered'] || 0),
-      icon: '✅',
+      icon: 'icons/check-circle.svg',
       color: 'green',
       trend: '+8%',
       trendDirection: 'up'
@@ -57,7 +57,7 @@ const AdminDashboard = ({ onViewChange }) => {
     {
       title: 'Revenue This Month',
       value: `€${(dashboardStats.totals.totalRevenue || 0).toLocaleString()}`,
-      icon: '💰',
+      icon: 'icons/alert-circle.svg',
       color: 'purple',
       trend: '+18%',
       trendDirection: 'up'
@@ -97,7 +97,7 @@ const AdminDashboard = ({ onViewChange }) => {
             className={styles.secondaryButton}
             onClick={() => onViewChange('manageOrders')}
           >
-            <span className={styles.buttonIcon}>📦</span>
+            <span className={styles.buttonIcon} style={{alignItems: 'center', display: 'flex', justifyContent: 'center'}}><img style={{ width: '20px', height: '20px' }} src="icons/cube-01.svg" alt="Manage Orders" /></span>
             Manage Orders
           </button>
           <button 

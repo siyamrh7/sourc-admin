@@ -510,6 +510,11 @@
     color: #6b7280;
     min-width: 3rem;
   }
+
+  /* Footer wrapper to offset fixed sidebar on desktop */
+  .footerContainer {
+    margin-left: 250px; /* Align footer with main content when sidebar is fixed */
+  }
   
   /* Status Badge Styles */
   .statusBadge {
@@ -653,4 +658,9 @@
      font-size: 0.75rem;
      min-width: 2rem;
    }
+
+  /* Reset footer offset on small screens where sidebar is stacked */
+  .footerContainer {
+    margin-left: 0;
+  }
 } 

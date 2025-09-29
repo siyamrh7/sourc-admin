@@ -87,6 +87,7 @@ export const customersAPI = {
   getCustomers: () => API.get('/customers'),
   getCustomer: (customerId) => API.get(`/customers/${customerId}`),
   createCustomer: (customerData) => API.post('/customers', customerData),
+  updateCustomer: (customerId, customerData) => API.put(`/customers/${customerId}`, customerData),
   deleteCustomer: (customerId) => API.delete(`/customers/${customerId}`),
 };
 

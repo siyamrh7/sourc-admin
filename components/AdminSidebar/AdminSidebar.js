@@ -5,7 +5,7 @@ const AdminSidebar = ({ currentView, onViewChange }) => {
     {
       id: 'dashboard',
       label: 'Dashboard Overview',
-      icon: '📊',
+      icon: 'icons/grid-01.svg',
       view: 'dashboard'
     },
     {
@@ -17,7 +17,7 @@ const AdminSidebar = ({ currentView, onViewChange }) => {
     {
       id: 'manageOrders',
       label: 'Manage Orders',
-      icon: '📦',
+      icon: 'icons/cube-01.svg',
       view: 'manageOrders'
     },
     {
@@ -44,7 +44,7 @@ const AdminSidebar = ({ currentView, onViewChange }) => {
             className={`${styles.navItem} ${currentView === item.view ? styles.active : ''}`}
             onClick={() => onViewChange(item.view)}
           >
-            <span className={styles.icon}>{item.icon}</span>
+            <span className={styles.icon}>{item.icon.includes('icons') ? <img src={item.icon} alt={item.label} /> : item.icon}</span>
             <span>{item.label}</span>
           </div>
         ))}

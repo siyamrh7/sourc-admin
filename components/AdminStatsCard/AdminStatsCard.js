@@ -7,17 +7,17 @@ const AdminStatsCard = ({ title, value, icon, color, trend, trendDirection }) =>
         <div className={styles.header}>
           <div className={styles.titleSection}>
             <span className={styles.title}>{title}</span>
-            {trend && (
+            {/* {trend && (
               <div className={`${styles.trend} ${styles[trendDirection]}`}>
                 <span className={styles.trendIcon}>
                   {trendDirection === 'up' ? '↗️' : '↘️'}
                 </span>
                 {trend}
               </div>
-            )}
+            )} */}
           </div>
-          <div className={`${styles.iconContainer} ${styles[color]}`}>
-            <span className={styles.icon}>{icon}</span>
+          <div className={`${styles.iconContainer} `}>
+            <span className={styles.icon}>{icon.includes('icons') ? <img src={icon} alt={title} /> : icon}</span>
           </div>
         </div>
         <div className={styles.value}>{value}</div>

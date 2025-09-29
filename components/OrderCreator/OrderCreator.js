@@ -4,7 +4,7 @@ import { fetchCustomers } from '../../store/actions/customerActions';
 import { createOrder } from '../../store/actions/orderActions';
 import styles from './OrderCreator.module.css';
 
-const OrderCreator = ({ onBack }) => {
+const OrderCreator = ({ onBack, preselectedCustomerId }) => {
   const dispatch = useDispatch();
   const { customers, loading } = useSelector(state => state.customers);
   const { loading: orderLoading, error } = useSelector(state => state.orders);
@@ -158,6 +158,17 @@ const OrderCreator = ({ onBack }) => {
   useEffect(() => {
     dispatch(fetchCustomers());
   }, [dispatch]);
+
+  // When customers load and a preselected ID exists, select that customer
+  useEffect(() => {
+    if (preselectedCustomerId && customers.length > 0) {
+      const exists = customers.find(c => c._id === preselectedCustomerId);
+      if (exists) {
+        setSelectedCustomerId(preselectedCustomerId);
+        setSelectedCustomer(exists);
+      }
+    }
+  }, [preselectedCustomerId, customers]);
 
   // Auto-calculate estimated arrival when timeline changes
   useEffect(() => {

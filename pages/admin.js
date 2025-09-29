@@ -17,6 +17,7 @@ export default function Admin() {
   
   const [currentView, setCurrentView] = useState('dashboard');
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [preselectedCustomerId, setPreselectedCustomerId] = useState(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
@@ -53,9 +54,14 @@ export default function Admin() {
     }
   }, [isAuthenticated, isCheckingAuth, router]);
 
-  const handleViewChange = (view, orderId = null) => {
+  const handleViewChange = (view, id = null) => {
     setCurrentView(view);
-    setSelectedOrderId(orderId);
+    if (view === 'manageOrders') {
+      setSelectedOrderId(id);
+    }
+    if (view === 'createOrder') {
+      setPreselectedCustomerId(id);
+    }
   };
 
   // Show loading state while checking authentication
@@ -106,7 +112,7 @@ export default function Admin() {
           <AdminDashboard onViewChange={handleViewChange} />
         )}
         {currentView === 'createOrder' && (
-          <OrderCreator onBack={() => handleViewChange('dashboard')} />
+          <OrderCreator onBack={() => handleViewChange('dashboard')} preselectedCustomerId={preselectedCustomerId} />
         )}
         {currentView === 'manageOrders' && (
           <OrderManager 

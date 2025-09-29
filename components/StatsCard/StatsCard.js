@@ -1,3 +1,4 @@
+/*
 import styles from './StatsCard.module.css';
 
 const StatsCard = ({ title, value, icon, iconColor }) => {
@@ -16,4 +17,5 @@ const StatsCard = ({ title, value, icon, iconColor }) => {
   );
 };
 
-export default StatsCard; 
+export default StatsCard;
+*/

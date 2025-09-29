@@ -171,11 +171,11 @@ const AdminOrderTable = ({ onViewChange, orders = [], loading = false, onRefresh
                   <div className={styles.progressContainer}>
                     <div className={styles.progressBar}>
                       <div 
-                        className={`${styles.progressFill} ${getProgressBarColor(order.timeline?.currentPhaseIndex || 0, 7)}`}
-                        style={{ width: `${((order.timeline?.currentPhaseIndex || 0) / 7) * 100}%` }}
+                        className={`${styles.progressFill} ${getProgressBarColor(Math.min(order?.progress?.current ?? 0, order?.progress?.total ?? 7), order?.progress?.total ?? 7)}`}
+                        style={{ width: `${(((Math.min(order?.progress?.current ?? 0, order?.progress?.total ?? 7)) / (order?.progress?.total ?? 7)) * 100)}%` }}
                       ></div>
                     </div>
-                    <span className={styles.progressText}>{order.timeline?.currentPhaseIndex || 0}/7</span>
+                    <span className={styles.progressText}>{Math.min(order?.progress?.current ?? 0, order?.progress?.total ?? 7)}/{order?.progress?.total ?? 7}</span>
                   </div>
                 </td>
                 <td>

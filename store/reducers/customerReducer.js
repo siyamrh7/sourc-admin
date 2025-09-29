@@ -5,6 +5,9 @@ import {
   CREATE_CUSTOMER_START,
   CREATE_CUSTOMER_SUCCESS,
   CREATE_CUSTOMER_FAILURE,
+  UPDATE_CUSTOMER_START,
+  UPDATE_CUSTOMER_SUCCESS,
+  UPDATE_CUSTOMER_FAILURE,
   DELETE_CUSTOMER_START,
   DELETE_CUSTOMER_SUCCESS,
   DELETE_CUSTOMER_FAILURE
@@ -14,7 +17,8 @@ const initialState = {
   customers: [],
   loading: {
     customers: false,
-    creating: false
+    creating: false,
+    updating: false
   },
   error: null,
 };
@@ -62,6 +66,28 @@ const customerReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: { ...state.loading, creating: false },
+        error: action.payload,
+      };
+
+    case UPDATE_CUSTOMER_START:
+      return {
+        ...state,
+        loading: { ...state.loading, updating: true },
+        error: null,
+      };
+
+    case UPDATE_CUSTOMER_SUCCESS:
+      return {
+        ...state,
+        loading: { ...state.loading, updating: false },
+        customers: state.customers.map(c => c._id === action.payload._id ? action.payload : c),
+        error: null,
+      };
+
+    case UPDATE_CUSTOMER_FAILURE:
+      return {
+        ...state,
+        loading: { ...state.loading, updating: false },
         error: action.payload,
       };
 

@@ -1,4 +1,4 @@
-.card {
+/* .card {
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
@@ -68,7 +68,6 @@
   color: #dc2626;
 }
 
-/* Mobile Styles */
 @media (max-width: 768px) {
   .card {
     padding: 1rem;
@@ -119,4 +118,4 @@
   .icon {
     font-size: 1.125rem;
   }
-} 
+}  */

@@ -5,6 +5,9 @@ import {
   CREATE_CUSTOMER_START,
   CREATE_CUSTOMER_SUCCESS,
   CREATE_CUSTOMER_FAILURE,
+  UPDATE_CUSTOMER_START,
+  UPDATE_CUSTOMER_SUCCESS,
+  UPDATE_CUSTOMER_FAILURE,
   DELETE_CUSTOMER_START,
   DELETE_CUSTOMER_SUCCESS,
   DELETE_CUSTOMER_FAILURE
@@ -68,6 +71,37 @@ export const createCustomer = (customerData) => {
       const errorMessage = error.response?.data?.error || error.message || 'Failed to create customer';
       dispatch({
         type: CREATE_CUSTOMER_FAILURE,
+        payload: errorMessage
+      });
+      return { success: false, error: errorMessage };
+    }
+  };
+};
+
+// Update Customer
+export const updateCustomer = (customerId, customerData) => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: UPDATE_CUSTOMER_START });
+      const response = await customersAPI.updateCustomer(customerId, customerData);
+
+      if (response.data.success) {
+        dispatch({
+          type: UPDATE_CUSTOMER_SUCCESS,
+          payload: response.data.data
+        });
+        return { success: true, data: response.data.data };
+      } else {
+        dispatch({
+          type: UPDATE_CUSTOMER_FAILURE,
+          payload: response.data.error || 'Failed to update customer'
+        });
+        return { success: false, error: response.data.error };
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to update customer';
+      dispatch({
+        type: UPDATE_CUSTOMER_FAILURE,
         payload: errorMessage
       });
       return { success: false, error: errorMessage };

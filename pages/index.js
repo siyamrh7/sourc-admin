@@ -2,44 +2,50 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from 'react-redux';
 import Head from "next/head";
+import Link from 'next/link';
 import { getCurrentCustomer, loginCustomer, clearCustomerAuthError } from '../store/actions/customerAuthActions';
-import styles from '../styles/CustomerPortal.module.css';
+import styles from '../styles/Login.module.css';
 
-export default function CustomerPortal() {
+export default function CustomerLogin() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { isAuthenticated, customer, isLoading, error } = useSelector(state => state.customerAuth);
-  
-  // Login form state
+  const { isAuthenticated, isLoading, error } = useSelector(state => state.customerAuth);
+
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
 
-  // Check authentication on mount
+  // Check authentication on mount (customer)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('customerToken');
-      if (token) {
-        dispatch(getCurrentCustomer());
-      } else {
-        setIsAuthenticating(false);
+    const checkAuth = async () => {
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('customerToken');
+        if (token) {
+          await dispatch(getCurrentCustomer());
+        }
       }
-    } else {
       setIsAuthenticating(false);
-    }
+    };
+    checkAuth();
   }, [dispatch]);
 
-  // Update authenticating state when auth check completes
+  // Redirect if already authenticated (customer -> dashboard)
   useEffect(() => {
-    if (!isLoading) {
-      setIsAuthenticating(false);
+    if (!isAuthenticating && isAuthenticated) {
+      router.push('/customer-dashboard');
     }
-  }, [isLoading]);
+  }, [isAuthenticated, isAuthenticating, router]);
 
-  const handleInputChange = (e) => {
+  // Clear error on mount
+  useEffect(() => {
+    dispatch(clearCustomerAuthError());
+  }, [dispatch]);
+
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -49,198 +55,164 @@ export default function CustomerPortal() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (error) {
-      dispatch(clearCustomerAuthError());
-    }
-    
-    const result = await dispatch(loginCustomer(formData));
-    
-    if (result.success) {
-      // Redirect will happen automatically via useEffect below
-      console.log('Login successful');
+    if (!formData.email || !formData.password) return;
+    setIsSubmitting(true);
+    if (error) dispatch(clearCustomerAuthError());
+    try {
+      const result = await dispatch(loginCustomer(formData));
+      if (result.success) {
+        router.push('/customer-dashboard');
+      }
+    } catch (err) {
+      console.error('Customer login error:', err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
-  // Redirect to customer dashboard if already authenticated
-  useEffect(() => {
-    if (isAuthenticated && customer && !isAuthenticating) {
-      router.push('/customer-dashboard');
-    }
-  }, [isAuthenticated, customer, isAuthenticating, router]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  // Loading state during initial auth check
-  if (isAuthenticating) {
-    return (
-      <>
-        <Head>
-          <title>Customer Portal - SOURC</title>
-          <meta name="description" content="Customer portal for order management" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-        
-        <div className={styles.loadingContainer}>
-          <div className={styles.spinner}></div>
-          <p>Loading...</p>
-        </div>
-      </>
-    );
-  }
-
-  // If authenticated, this will redirect to customer-dashboard
-  // This is just a fallback while redirecting
-  if (isAuthenticated && customer) {
-    return (
-      <>
-        <Head>
-          <title>Customer Portal - SOURC</title>
-          <meta name="description" content="Customer portal for order management" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-        
-        <div className={styles.loadingContainer}>
-          <div className={styles.spinner}></div>
-          <p>Redirecting to dashboard...</p>
-        </div>
-      </>
-    );
-  }
-
-  // Show login form for non-authenticated users
   return (
     <>
       <Head>
-        <title>Customer Portal - SOURC</title>
-        <meta name="description" content="Customer portal for order management and tracking" />
+        <title>Log in - sourc.</title>
+        <meta name="description" content="Login to sourc customer portal" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      
-      <div className={styles.container}>
-        <main className={styles.main}>
-          {/* Login Card */}
-          <div className={styles.loginCard}>
-            <div className={styles.header}>
-              <div className={styles.logo}>
-                <h1>SOURC</h1>
-              </div>
-              <h2 className={styles.title}>Customer Portal</h2>
-              <p className={styles.subtitle}>
-                Access your orders and track delivery progress
-              </p>
-            </div>
 
-            <form onSubmit={handleSubmit} className={styles.form}>
+      <div className={styles.container}>
+        {/* Header */}
+        <header className={styles.header}>
+          <div className={styles.headerContainer}>
+            <Link href="/" className={styles.logo}>
+              <span className={styles.logoText}>sourc.</span>
+            </Link>
+            <nav className={styles.nav}>
+              <Link href="#" className={styles.navLink}>About Us</Link>
+              <Link href="#" className={styles.navLink}>Services</Link>
+              <Link href="#" className={styles.navLink}>Process</Link>
+              <Link href="#" className={styles.navLink}>Team</Link>
+            </nav>
+            <div className={styles.headerActions}>
+              <div className={styles.userIcon}><span>😊</span></div>
+              <button className={styles.ctaButton}>START WITH SOURCES</button>
+              <div className={styles.language}><span>EN 🇬🇧</span></div>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <main className={styles.main}>
+          <div className={styles.loginContainer}>
+            <div className={styles.loginCard}>
+              <h1 className={styles.title}>Log in</h1>
+
               {error && (
-                <div className={styles.error}>
-                  <span className={styles.errorIcon}>⚠️</span>
+                <div className={styles.errorMessage}>
                   {error}
                 </div>
               )}
 
-              <div className={styles.formGroup}>
-                <label htmlFor="email" className={styles.label}>
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={styles.input}
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="password" className={styles.label}>
-                  Password
-                </label>
-                <div className={styles.passwordWrapper}>
+              <form onSubmit={handleSubmit} className={styles.form}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="email" className={styles.label}>Email</label>
                   <input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="you@company.com"
                     className={styles.input}
-                    placeholder="Enter your password"
                     required
+                    disabled={isSubmitting || isLoading}
                   />
-                  <button
-                    type="button"
-                    onClick={togglePasswordVisibility}
-                    className={styles.passwordToggle}
-                  >
-                    {showPassword ? "👁️" : "👁️‍🗨️"}
-                  </button>
                 </div>
-              </div>
 
-              <button
-                type="submit"
-                className={styles.submitButton}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <span className={styles.spinner}></span>
-                    Signing In...
-                  </>
-                ) : (
-                  'Sign In'
-                )}
-              </button>
-            </form>
+                <div className={styles.formGroup}>
+                  <label htmlFor="password" className={styles.label}>Password</label>
+                  <div className={styles.passwordContainer}>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      placeholder="Enter"
+                      className={styles.input}
+                      required
+                      disabled={isSubmitting || isLoading}
+                    />
+                    <button
+                      type="button"
+                      onClick={togglePasswordVisibility}
+                      className={styles.passwordToggle}
+                      disabled={isSubmitting || isLoading}
+                    >
+                      {showPassword ? '👁️' : '👁️‍🗨️'}
+                    </button>
+                  </div>
+                </div>
 
-            <div className={styles.footer}>
-              <p className={styles.adminLink}>
-                Are you an administrator?{' '}
-                <a href="/login" className={styles.link}>
-                  Sign in here
-                </a>
-              </p>
+                <button
+                  type="submit"
+                  className={styles.loginButton}
+                  disabled={isSubmitting || isLoading || !formData.email || !formData.password}
+                >
+                  {(isSubmitting || isLoading) ? 'Logging in...' : 'Log in'}
+                </button>
+
+                <div className={styles.forgotPassword}>
+                  <Link href="#" className={styles.forgotLink}>Forgot password?</Link>
+                </div>
+              </form>
             </div>
           </div>
-
-          {/* Features Section */}
-          <div className={styles.features}>
-            <h3 className={styles.featuresTitle}>Customer Portal Features</h3>
-            <ul className={styles.featuresList}>
-              <li className={styles.feature}>
-                <span className={styles.featureIcon}>📦</span>
-                <span>View your assigned orders</span>
-              </li>
-              <li className={styles.feature}>
-                <span className={styles.featureIcon}>📍</span>
-                <span>Track delivery progress in real-time</span>
-              </li>
-              <li className={styles.feature}>
-                <span className={styles.featureIcon}>📋</span>
-                <span>Access order details and timeline</span>
-              </li>
-              <li className={styles.feature}>
-                <span className={styles.featureIcon}>🔔</span>
-                <span>Get notified of status updates</span>
-              </li>
-              <li className={styles.feature}>
-                <span className={styles.featureIcon}>👤</span>
-                <span>Manage your profile information</span>
-              </li>
-              <li className={styles.feature}>
-                <span className={styles.featureIcon}>🔒</span>
-                <span>Secure access to your data</span>
-              </li>
-            </ul>
-          </div>
         </main>
+
+        {/* Footer */}
+        <footer className={styles.footer}>
+          <div className={styles.footerContainer}>
+            <div className={styles.footerContent}>
+              <div className={styles.footerLeft}>
+                <Link href="/" className={styles.footerLogo}>
+                  <span className={styles.logoText}>sourc.</span>
+                </Link>
+                <nav className={styles.footerNav}>
+                  <Link href="#" className={styles.footerNavLink}>About Us</Link>
+                  <Link href="#" className={styles.footerNavLink}>Services</Link>
+                  <Link href="#" className={styles.footerNavLink}>Process</Link>
+                  <Link href="#" className={styles.footerNavLink}>Team</Link>
+                </nav>
+                <div className={styles.contact}>
+                  <div className={styles.contactItem}><span className={styles.contactIcon}>📞</span><span>+31 9701281543</span></div>
+                  <div className={styles.contactItem}><span className={styles.contactIcon}>✉️</span><span>contact@sourc.nl</span></div>
+                </div>
+              </div>
+              <div className={styles.footerRight}>
+                <div className={styles.newsletter}>
+                  <h3 className={styles.newsletterTitle}>Stay informed</h3>
+                  <div className={styles.newsletterForm}>
+                    <input type="email" placeholder="Please add your email address.." className={styles.emailInput} />
+                    <button className={styles.sendButton}>Send</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className={styles.footerBottom}>
+              <div className={styles.copyright}>© Sourc. All rights reserved.</div>
+              <div className={styles.legal}>
+                <Link href="#" className={styles.legalLink}>Terms</Link>
+                <Link href="#" className={styles.legalLink}>Privacy</Link>
+                <Link href="#" className={styles.legalLink}>Cookies</Link>
+                <div className={styles.language}>EN 🇬🇧</div>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </>
   );

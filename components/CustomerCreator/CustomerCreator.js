@@ -20,13 +20,7 @@ const CustomerCreator = ({ onBack, onViewChange }) => {
       taxId: '',
       website: ''
     },
-    address: {
-      street: '',
-      city: '',
-      state: '',
-      postalCode: '',
-      country: ''
-    }
+    address: ''
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -111,7 +105,15 @@ const CustomerCreator = ({ onBack, onViewChange }) => {
 
     try {
       // Remove confirmPassword from data
-      const { confirmPassword, ...customerData } = formData;
+      const { confirmPassword, ...rawData } = formData;
+      // Map single string address to backend company.address.street if provided
+      const customerData = {
+        ...rawData,
+        ...(rawData.address?.trim()
+          ? { company: { ...rawData.company, address: { street: rawData.address.trim() } } }
+          : { company: rawData.company })
+      };
+      if (!rawData.address?.trim()) delete customerData.address;
       
       const result = await dispatch(createCustomer(customerData));
       
@@ -126,7 +128,7 @@ const CustomerCreator = ({ onBack, onViewChange }) => {
           customerType: 'business',
           accountStatus: 'active',
           company: { name: '', taxId: '', website: '' },
-          address: { street: '', city: '', state: '', postalCode: '', country: '' }
+          address: ''
         });
         
         // Show success message or redirect
@@ -338,7 +340,19 @@ const CustomerCreator = ({ onBack, onViewChange }) => {
                     )}
                   </label>
                 </div>
-
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>
+                      Address
+                      <input
+                        type="text"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleInputChange}
+                        className={styles.input}
+                        placeholder="Enter full address"
+                      />
+                    </label>
+                  </div>
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label className={styles.label}>
@@ -353,7 +367,7 @@ const CustomerCreator = ({ onBack, onViewChange }) => {
                       />
                     </label>
                   </div>
-
+                
                   <div className={styles.formGroup}>
                     <label className={styles.label}>
                       Website
@@ -371,82 +385,7 @@ const CustomerCreator = ({ onBack, onViewChange }) => {
               </div>
             )}
 
-            {/* Address Information */}
-            <div className={styles.section}>
-              <h3 className={styles.sectionTitle}>Address Information</h3>
-              
-              <div className={styles.formGroup}>
-                <label className={styles.label}>
-                  Street Address
-                  <input
-                    type="text"
-                    name="address.street"
-                    value={formData.address.street}
-                    onChange={handleInputChange}
-                    className={styles.input}
-                    placeholder="Street address"
-                  />
-                </label>
-              </div>
-
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>
-                    City
-                    <input
-                      type="text"
-                      name="address.city"
-                      value={formData.address.city}
-                      onChange={handleInputChange}
-                      className={styles.input}
-                      placeholder="City"
-                    />
-                  </label>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>
-                    State/Province
-                    <input
-                      type="text"
-                      name="address.state"
-                      value={formData.address.state}
-                      onChange={handleInputChange}
-                      className={styles.input}
-                      placeholder="State or Province"
-                    />
-                  </label>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>
-                    Postal Code
-                    <input
-                      type="text"
-                      name="address.postalCode"
-                      value={formData.address.postalCode}
-                      onChange={handleInputChange}
-                      className={styles.input}
-                      placeholder="Postal code"
-                    />
-                  </label>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>
-                    Country
-                    <input
-                      type="text"
-                      name="address.country"
-                      value={formData.address.country}
-                      onChange={handleInputChange}
-                      className={styles.input}
-                      placeholder="Country"
-                    />
-                  </label>
-                </div>
-              </div>
-            </div>
+         
           </div>
 
           {error && (

@@ -1,3 +1,4 @@
+/*
 import styles from './Sidebar.module.css';
 
 const Sidebar = () => {
@@ -25,3 +26,4 @@ const Sidebar = () => {
 };
 
 export default Sidebar; 
+*/

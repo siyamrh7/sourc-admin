@@ -3,7 +3,10 @@ import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import Head from 'next/head';
 import styles from '../styles/CustomerProfile.module.css';
-import { logout } from '../store/actions/customerAuthActions';
+import dashboardStyles from '../styles/CustomerDashboard.module.css';
+import Footer from '../components/Footer/Footer';
+import { logout, getCurrentCustomer } from '../store/actions/customerAuthActions';
+import API, { customerAuthAPI } from '../services/api';
 
 const CustomerProfile = () => {
   const router = useRouter();
@@ -32,6 +35,12 @@ const CustomerProfile = () => {
   const [resetEmail, setResetEmail] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [address, setAddress] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -47,15 +56,19 @@ const CustomerProfile = () => {
         company: {
           name: customer.company?.name || customer.name || ''
         },
-        address: {
-          street: customer.address?.street || '',
-          city: customer.address?.city || '',
-          state: customer.address?.state || '',
-          postalCode: customer.address?.postalCode || '',
-          country: customer.address?.country || ''
-        }
+        address: customer.address || {}
       });
       setResetEmail(customer.email || '');
+      const oneLine =
+        customer.company?.address?.street ||
+        [
+          customer.address?.street,
+          customer.address?.city,
+          customer.address?.state,
+          customer.address?.postalCode,
+          customer.address?.country
+        ].filter(Boolean).join(', ');
+      setAddress(oneLine || '');
     }
   }, [isAuthenticated, customer, router]);
 
@@ -84,21 +97,36 @@ const CustomerProfile = () => {
       setIsLoading(true);
       setMessage({ type: '', text: '' });
 
-      const response = await fetch('/api/customer-auth/update-profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('customerToken')}`
-        },
-        body: JSON.stringify(profileData)
-      });
+      // Map single-line address to address.street like CustomerCreator
+      const payload = {
+        ...profileData,
+        // Do NOT send root address; align with admin flows
+        company: {
+          ...(profileData.company || {}),
+          ...(address?.trim() ? { address: { street: address.trim() } } : { address: {} })
+        }
+      };
 
-      const data = await response.json();
+      const { data } = await customerAuthAPI.updateProfile(payload);
 
       if (data.success) {
         setMessage({ type: 'success', text: 'Profile updated successfully!' });
         setIsEditing(false);
-        // Update Redux state would be ideal here
+        // Update local state from server response
+        const updated = data.data || {};
+        setProfileData({
+          name: updated.name || '',
+          email: updated.email || '',
+          phone: updated.phone || '',
+          company: {
+            name: updated.company?.name || updated.name || ''
+          },
+          address: updated.address || {}
+        });
+        const oneLineUpdated = updated.company?.address?.street || '';
+        setAddress(oneLineUpdated || '');
+        // Refresh Redux customer state
+        dispatch(getCurrentCustomer());
       } else {
         setMessage({ type: 'error', text: data.message || 'Failed to update profile' });
       }
@@ -114,15 +142,7 @@ const CustomerProfile = () => {
       setResetLoading(true);
       setMessage({ type: '', text: '' });
 
-      const response = await fetch('/api/customer-auth/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email: resetEmail })
-      });
-
-      const data = await response.json();
+      const { data } = await API.post('/customer-auth/forgot-password', { email: resetEmail });
 
       if (data.success) {
         setMessage({ type: 'success', text: 'Password reset email sent successfully!' });
@@ -142,10 +162,12 @@ const CustomerProfile = () => {
   };
 
   const formatAddress = () => {
-    const { street, city, state, postalCode, country } = profileData.address;
-    const parts = [street, `${city}${state ? `, ${state}` : ''}`, postalCode, country].filter(Boolean);
-    return parts.join(', ');
+    return address || '';
   };
+
+  if (!mounted) {
+    return null;
+  }
 
   if (!isAuthenticated) {
     return null;
@@ -158,8 +180,8 @@ const CustomerProfile = () => {
         <meta name="description" content="Manage your profile and account settings" />
       </Head>
 
-      <div className={styles.container}>
-        {/* Header */}
+      <div className={dashboardStyles.dashboardContainer}>
+        {/* Header (kept from profile as requested) */}
         <header className={styles.header}>
           <div className={styles.headerContent}>
             <div className={styles.logo}>sourc.</div>
@@ -179,27 +201,27 @@ const CustomerProfile = () => {
           </div>
         </header>
 
-        <div className={styles.dashboardLayout}>
-          {/* Sidebar */}
-          <aside className={styles.sidebar}>
-            <div className={styles.sidebarContent}>
-              <div className={styles.navigation}>
+        <div className={dashboardStyles.dashboardLayout}>
+          {/* Sidebar (dashboard styles) */}
+          <aside className={dashboardStyles.sidebar}>
+            <div className={dashboardStyles.sidebarContent}>
+              <div className={dashboardStyles.navigation}>
                 <div 
-                  className={styles.navItem}
+                  className={dashboardStyles.navItem}
                   onClick={() => router.push('/customer-dashboard')}
                 >
-                  <span className={styles.icon}>📊</span>
+                  <span className={dashboardStyles.icon}><img src="icons/grid-01.svg" alt="Order Dashboard" /></span>
                   <span>Order Dashboard</span>
                 </div>
-                <div className={`${styles.navItem} ${styles.active}`}>
-                  <span className={styles.icon}>⚙️</span>
+                <div className={`${dashboardStyles.navItem} ${dashboardStyles.active}`}>
+                  <span className={dashboardStyles.icon}><img src="icons/settings-01.svg" alt="Profile & Settings" /></span>
                   <span>Profile & Settings</span>
                 </div>
               </div>
               
-              <div className={styles.sidebarFooter}>
-                <div className={styles.logoutItem} onClick={handleLogout}>
-                  <span className={styles.icon}>🚪</span>
+              <div className={dashboardStyles.sidebarFooter}>
+                <div className={dashboardStyles.logoutItem} onClick={handleLogout}>
+                  <span className={dashboardStyles.icon}>🚪</span>
                   <span>Log out</span>
                 </div>
               </div>
@@ -207,7 +229,7 @@ const CustomerProfile = () => {
           </aside>
 
           {/* Main Content */}
-          <main className={styles.mainContent}>
+          <main className={dashboardStyles.mainContent}>
             <div className={styles.profileContainer}>
               <h1 className={styles.pageTitle}>{profileData.company.name}'s info</h1>
               
@@ -256,60 +278,16 @@ const CustomerProfile = () => {
                           />
                         </div>
 
-                        <div className={styles.formRow}>
-                          <div className={styles.formGroup}>
-                            <label>Street Address</label>
-                            <input
-                              type="text"
-                              name="address.street"
-                              value={profileData.address.street}
-                              onChange={handleInputChange}
-                              className={styles.input}
-                            />
-                          </div>
-                          <div className={styles.formGroup}>
-                            <label>City</label>
-                            <input
-                              type="text"
-                              name="address.city"
-                              value={profileData.address.city}
-                              onChange={handleInputChange}
-                              className={styles.input}
-                            />
-                          </div>
-                        </div>
-
-                        <div className={styles.formRow}>
-                          <div className={styles.formGroup}>
-                            <label>State</label>
-                            <input
-                              type="text"
-                              name="address.state"
-                              value={profileData.address.state}
-                              onChange={handleInputChange}
-                              className={styles.input}
-                            />
-                          </div>
-                          <div className={styles.formGroup}>
-                            <label>Postal Code</label>
-                            <input
-                              type="text"
-                              name="address.postalCode"
-                              value={profileData.address.postalCode}
-                              onChange={handleInputChange}
-                              className={styles.input}
-                            />
-                          </div>
-                          <div className={styles.formGroup}>
-                            <label>Country</label>
-                            <input
-                              type="text"
-                              name="address.country"
-                              value={profileData.address.country}
-                              onChange={handleInputChange}
-                              className={styles.input}
-                            />
-                          </div>
+                        <div className={styles.formGroup}>
+                          <label>Address</label>
+                          <input
+                            type="text"
+                            name="address"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            className={styles.input}
+                            placeholder="Enter full address"
+                          />
                         </div>
 
                         <div className={styles.formGroup}>
@@ -390,42 +368,10 @@ const CustomerProfile = () => {
           </main>
         </div>
 
-        {/* Footer */}
-        <footer className={styles.footer}>
-          <div className={styles.footerContent}>
-            <div className={styles.footerLeft}>
-              <div className={styles.footerLogo}>sourc.</div>
-              <nav className={styles.footerNav}>
-                <span>About Us</span>
-                <span>Services</span>
-                <span>Process</span>
-                <span>Team</span>
-              </nav>
-              <div className={styles.footerContact}>
-                <span>📞 +31 9701028154</span>
-                <span>✉️ contact@sourc.nl</span>
-              </div>
-            </div>
-            <div className={styles.footerRight}>
-              <div className={styles.newsletter}>
-                <span>Stay informed</span>
-                <div className={styles.newsletterForm}>
-                  <input placeholder="Please add your email address.." />
-                  <button>Send</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className={styles.footerBottom}>
-            <span>© Sourc. All rights reserved.</span>
-            <div className={styles.footerLinks}>
-              <span>Terms</span>
-              <span>Privacy</span>
-              <span>Cookies</span>
-              <span>EN 🇬🇧</span>
-            </div>
-          </div>
-        </footer>
+        {/* Footer aligned with main content */}
+        <div className={dashboardStyles.footerContainer}>
+          <Footer />
+        </div>
       </div>
     </>
   );
