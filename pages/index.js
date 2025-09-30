@@ -89,7 +89,7 @@ export default function CustomerLogin() {
         <header className={styles.header}>
           <div className={styles.headerContainer}>
             <button className={styles.mobileMenuButton} onClick={() => setIsDrawerOpen(true)} aria-label="Open menu">
-              <span className={styles.hamburger}>≡</span>
+              <img src="/icons/menu.svg" alt="Menu" className={styles.hamburger} />
             </button>
             <Link href="/" className={styles.logo}>
               <span className={styles.logoText}>sourc.</span>

@@ -180,7 +180,7 @@ export default function CustomerDashboard() {
         <header className={profileStyles.header}>
           <div className={profileStyles.headerContent}>
             <button className={styles.mobileMenuButton} onClick={() => setIsDrawerOpen(true)} aria-label="Open menu">
-              <span className={styles.hamburger}>≡</span>
+              <img src="/icons/menu.svg" alt="Menu" className={styles.hamburger} />
             </button>
             <div className={profileStyles.logo}>sourc.</div>
             <nav className={profileStyles.nav}>

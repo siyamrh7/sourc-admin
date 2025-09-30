@@ -187,7 +187,7 @@ const CustomerProfile = () => {
         <header className={styles.header}>
           <div className={styles.headerContent}>
             <button className={loginStyles.mobileMenuButton} onClick={() => setIsDrawerOpen(true)} aria-label="Open menu">
-              <span className={loginStyles.hamburger}>≡</span>
+              <img src="/icons/menu.svg" alt="Menu" className={loginStyles.hamburger} />
             </button>
             <div className={styles.logo}>sourc.</div>
             <nav className={styles.nav}>
