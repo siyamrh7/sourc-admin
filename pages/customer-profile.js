@@ -231,7 +231,7 @@ const CustomerProfile = () => {
           {/* Main Content */}
           <main className={dashboardStyles.mainContent}>
             <div className={styles.profileContainer}>
-              <h1 className={styles.pageTitle}>{profileData.company.name}'s info</h1>
+              <h1 className={styles.pageTitle}>{profileData.company.name}&apos;s info</h1>
               
               {message.text && (
                 <div className={`${styles.message} ${styles[message.type]}`}>
@@ -343,7 +343,7 @@ const CustomerProfile = () => {
                 <div className={styles.passwordSection}>
                   <h2 className={styles.sectionTitle}>Reset password</h2>
                   <p className={styles.resetDescription}>
-                    You'll receive an email to reset your password.
+                    You&apos;ll receive an email to reset your password.
                   </p>
                   
                   <div className={styles.resetForm}>

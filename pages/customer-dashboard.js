@@ -220,7 +220,7 @@ export default function CustomerDashboard() {
                 {/* Dashboard Header */}
                 <div className={styles.dashboardHeader}>
                   <h1 className={styles.dashboardTitle}>
-                    {customer?.company?.name || customer?.name || 'ZUNGO Pest Control B.V'}'s dashboard
+                    {customer?.company?.name || customer?.name || 'ZUNGO Pest Control B.V'}&apos;s dashboard
                   </h1>
                   <p className={styles.dashboardSubtitle}>
                     Overview of all your orders and their current status
