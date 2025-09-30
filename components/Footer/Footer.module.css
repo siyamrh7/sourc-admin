@@ -103,18 +103,21 @@
 }
 
 .sendButton {
-  background: #10b981;
-  color: white;
+  background: rgba(149, 225, 212, 1);
+  color: rgba(0, 0, 0, 1);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 0.375rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
+  border: 1px solid rgba(94, 172, 159, 1);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+
 }
 
 .sendButton:hover {
-  background: #059669;
+  background: #33cd9c;
 }
 
 .bottom {

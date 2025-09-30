@@ -59,18 +59,22 @@
 }
 
 .sourceButton {
-  background: #10b981;
-  color: white;
+  background: rgba(149, 225, 212, 1);
+  color: rgba(0, 0, 0, 1);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 8px;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: background-color 0.2s;
+  border: 1px solid rgba(94, 172, 159, 1);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+
 }
 
 .sourceButton:hover {
-  background: #059669;
+  background: #33cd9c;
 }
 
 .languageSelector {

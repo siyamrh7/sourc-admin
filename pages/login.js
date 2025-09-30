@@ -84,19 +84,19 @@ export default function Login() {
             </Link>
             
             <nav className={styles.nav}>
-              <Link href="#" className={styles.navLink}>About Us</Link>
-              <Link href="#" className={styles.navLink}>Services</Link>
-              <Link href="#" className={styles.navLink}>Process</Link>
-              <Link href="#" className={styles.navLink}>Team</Link>
+              <Link href="https://sourc.nl/#over-ons" target="_blank" rel="noopener noreferrer" className={styles.navLink}>About Us</Link>
+              <Link href="https://sourc.nl/#diensten" target="_blank" rel="noopener noreferrer" className={styles.navLink}>Services</Link>
+              <Link href="https://sourc.nl/#proces" target="_blank" rel="noopener noreferrer" className={styles.navLink}>Process</Link>
+              <Link href="https://sourc.nl/#team" target="_blank" rel="noopener noreferrer" className={styles.navLink}>Team</Link>
             </nav>
             
             <div className={styles.headerActions}>
               <div className={styles.userIcon}>
-                <span>😊</span>
+                <span><img src="icons/user-circle.svg" alt="User" /></span>
               </div>
-              <button className={styles.ctaButton}>
+              <a href="https://sourc.nl/#contact" target="_blank" rel="noopener noreferrer" className={styles.ctaButton}>
                 START WITH SOURCES
-              </button>
+              </a>
               <div className={styles.language}>
                 <span>EN 🇬🇧</span>
               </div>
@@ -189,19 +189,19 @@ export default function Login() {
                 </Link>
                 
                 <nav className={styles.footerNav}>
-                  <Link href="#" className={styles.footerNavLink}>About Us</Link>
-                  <Link href="#" className={styles.footerNavLink}>Services</Link>
-                  <Link href="#" className={styles.footerNavLink}>Process</Link>
-                  <Link href="#" className={styles.footerNavLink}>Team</Link>
+                  <Link href="https://sourc.nl/#over-ons" target="_blank" rel="noopener noreferrer" className={styles.footerNavLink}>About Us</Link>
+                  <Link href="https://sourc.nl/#diensten" target="_blank" rel="noopener noreferrer" className={styles.footerNavLink}>Services</Link>
+                  <Link href="https://sourc.nl/#proces" target="_blank" rel="noopener noreferrer" className={styles.footerNavLink}>Process</Link>
+                  <Link href="https://sourc.nl/#team" target="_blank" rel="noopener noreferrer" className={styles.footerNavLink}>Team</Link>
                 </nav>
                 
                 <div className={styles.contact}>
                   <div className={styles.contactItem}>
-                    <span className={styles.contactIcon}>📞</span>
+                    <img src="icons/phone.svg" alt="Phone" />
                     <span>+31 9701281543</span>
                   </div>
                   <div className={styles.contactItem}>
-                    <span className={styles.contactIcon}>✉️</span>
+                    <img src="icons/mail.svg" alt="Email" />
                     <span>contact@sourc.nl</span>
                   </div>
                 </div>

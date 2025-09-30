@@ -169,14 +169,14 @@ export default function CustomerDashboard() {
           <div className={profileStyles.headerContent}>
             <div className={profileStyles.logo}>sourc.</div>
             <nav className={profileStyles.nav}>
-              <span>About Us</span>
-              <span>Services</span>
-              <span>Process</span>
-              <span>Team</span>
+              <a href="https://sourc.nl/#over-ons" target="_blank" rel="noopener noreferrer">About Us</a>
+              <a href="https://sourc.nl/#diensten" target="_blank" rel="noopener noreferrer">Services</a>
+              <a href="https://sourc.nl/#proces" target="_blank" rel="noopener noreferrer">Process</a>
+              <a href="https://sourc.nl/#team" target="_blank" rel="noopener noreferrer">Team</a>
             </nav>
             <div className={profileStyles.headerActions}>
-              <span className={profileStyles.userIcon}>👤</span>
-              <button className={profileStyles.sourceButton}>START WITH SOURCES</button>
+              <span className={profileStyles.userIcon}><img src="icons/user-circle.svg" alt="User" /></span>
+              <a href="https://sourc.nl/#contact" target="_blank" rel="noopener noreferrer" className={profileStyles.sourceButton}>START WITH SOURCES</a>
               <div className={profileStyles.languageSelector}>
                 <span>EN 🇬🇧</span>
               </div>
@@ -204,7 +204,7 @@ export default function CustomerDashboard() {
               
               <div className={styles.sidebarFooter}>
                 <div className={styles.logoutItem} onClick={handleLogout}>
-                  <span className={styles.icon}>🚪</span>
+                  <span className={styles.icon}><img src="icons/logout.svg" alt="Logout" /></span>
                   <span>Log out</span>
                 </div>
               </div>

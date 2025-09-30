@@ -47,7 +47,7 @@ const AdminHeader = () => {
             <span className={styles.adminText}>Welcome, {user?.name || 'Admin'}</span>
             <div className={styles.userProfile} onClick={toggleUserMenu}>
               <div className={styles.userIcon}>
-                <span>👨‍💼</span>
+                <span><img src="icons/user-circle.svg" alt="User" /></span>
               </div>
               <span className={styles.userName}>{user?.name || 'Admin'}</span>
               <span className={styles.dropdown}>▼</span>

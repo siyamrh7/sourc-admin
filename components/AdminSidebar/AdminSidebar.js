@@ -53,7 +53,7 @@ const AdminSidebar = ({ currentView, onViewChange }) => {
       <div className={styles.footer}>
         <div className={styles.adminInfo}>
           <div className={styles.adminCard}>
-            <div className={styles.adminIcon}>👨‍💼</div>
+            <div className={styles.adminIcon}><img src="icons/user-circle.svg" alt="User" /></div>
             <div className={styles.adminDetails}>
               <div className={styles.adminName}>Admin User</div>
               <div className={styles.adminRole}>System Administrator</div>

@@ -55,6 +55,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  
 }
 
 .userIcon {
@@ -63,18 +64,22 @@
 }
 
 .ctaButton {
-  background: #10b981;
-  color: white;
+  background: rgba(149, 225, 212, 1);
+  color: rgba(0, 0, 0, 1);
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 0.6rem 1rem;
   border-radius: 0.5rem;
   font-weight: 600;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: background 0.2s;
+  border: 1px solid rgba(94, 172, 159, 1);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+
 }
 
 .ctaButton:hover {
-  background: #059669;
+  background: #33cd9c;
 }
 
 .language {
@@ -199,20 +204,22 @@
 
 .loginButton {
   width: 100%;
-  background: #10b981;
-  color: white;
+  background: rgba(149, 225, 212, 1);
+  color: rgba(0, 0, 0, 1);
   border: none;
-  padding: 0.875rem 1rem;
+  padding: 0.7rem 1rem;
   border-radius: 0.5rem;
   font-weight: 600;
-  font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s;
   margin-top: 0.5rem;
+  border: 1px solid rgba(94, 172, 159, 1);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+
 }
 
 .loginButton:hover:not(:disabled) {
-  background: #059669;
+  background: #33cd9c;
   transform: translateY(-1px);
 }
 
@@ -347,19 +354,23 @@
 }
 
 .sendButton {
-  background: #10b981;
-  color: white;
+  background: rgba(149, 225, 212, 1);
+  color: rgba(0, 0, 0, 1);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
+  border: 1px solid rgba(94, 172, 159, 1);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+
   white-space: nowrap;
 }
 
 .sendButton:hover {
-  background: #059669;
+  background: #33cd9c;
 }
 
 .footerBottom {

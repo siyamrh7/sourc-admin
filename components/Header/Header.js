@@ -25,10 +25,10 @@ const Header = ({ onMobileMenuToggle }) => {
         </div>
         
         <nav className={styles.nav}>
-          <Link href="#" className={styles.navLink}>About Us</Link>
-          <Link href="#" className={styles.navLink}>Services</Link>
-          <Link href="#" className={styles.navLink}>Process</Link>
-          <Link href="#" className={styles.navLink}>Team</Link>
+          <Link href="https://sourc.nl/#over-ons" target="_blank" rel="noopener noreferrer" className={styles.navLink}>About Us</Link>
+          <Link href="https://sourc.nl/#diensten" target="_blank" rel="noopener noreferrer" className={styles.navLink}>Services</Link>
+          <Link href="https://sourc.nl/#proces" target="_blank" rel="noopener noreferrer" className={styles.navLink}>Process</Link>
+          <Link href="https://sourc.nl/#team" target="_blank" rel="noopener noreferrer" className={styles.navLink}>Team</Link>
           <Link href="/login" className={`${styles.navLink} ${styles.adminPortal}`}>Admin Portal</Link>
         </nav>
         
@@ -36,9 +36,9 @@ const Header = ({ onMobileMenuToggle }) => {
           <div className={styles.userIcon}>
             <span>😊</span>
           </div>
-          <button className={styles.ctaButton}>
+          <a href="https://sourc.nl/#contact" target="_blank" rel="noopener noreferrer" className={styles.ctaButton}>
             START WITH SOURCES
-          </button>
+          </a>
           <div className={styles.language}>
             EN 🇬🇧
           </div>
@@ -52,16 +52,16 @@ const Header = ({ onMobileMenuToggle }) => {
       {isMobileMenuOpen && (
         <div className={styles.mobileMenu}>
           <nav className={styles.mobileNav}>
-            <Link href="#" className={styles.mobileNavLink}>About Us</Link>
-            <Link href="#" className={styles.mobileNavLink}>Services</Link>
-            <Link href="#" className={styles.mobileNavLink}>Process</Link>
-            <Link href="#" className={styles.mobileNavLink}>Team</Link>
+            <Link href="https://sourc.nl/#over-ons" target="_blank" rel="noopener noreferrer" className={styles.mobileNavLink}>About Us</Link>
+            <Link href="https://sourc.nl/#diensten" target="_blank" rel="noopener noreferrer" className={styles.mobileNavLink}>Services</Link>
+            <Link href="https://sourc.nl/#proces" target="_blank" rel="noopener noreferrer" className={styles.mobileNavLink}>Process</Link>
+            <Link href="https://sourc.nl/#team" target="_blank" rel="noopener noreferrer" className={styles.mobileNavLink}>Team</Link>
             <Link href="/login" className={`${styles.mobileNavLink} ${styles.adminPortal}`}>Admin Portal</Link>
           </nav>
           <div className={styles.mobileActions}>
-            <button className={styles.mobileCtaButton}>
+            <a href="https://sourc.nl/#contact" target="_blank" rel="noopener noreferrer" className={styles.mobileCtaButton}>
               START WITH SOURCES
-            </button>
+            </a>
             <div className={styles.mobileLanguage}>
               EN 🇬🇧
             </div>

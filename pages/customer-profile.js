@@ -186,14 +186,14 @@ const CustomerProfile = () => {
           <div className={styles.headerContent}>
             <div className={styles.logo}>sourc.</div>
             <nav className={styles.nav}>
-              <span>About Us</span>
-              <span>Services</span>
-              <span>Process</span>
-              <span>Team</span>
+              <a href="https://sourc.nl/#over-ons" target="_blank" rel="noopener noreferrer">About Us</a>
+              <a href="https://sourc.nl/#diensten" target="_blank" rel="noopener noreferrer">Services</a>
+              <a href="https://sourc.nl/#proces" target="_blank" rel="noopener noreferrer">Process</a>
+              <a href="https://sourc.nl/#team" target="_blank" rel="noopener noreferrer">Team</a>
             </nav>
             <div className={styles.headerActions}>
-              <span className={styles.userIcon}>👤</span>
-              <button className={styles.sourceButton}>START WITH SOURCES</button>
+              <span className={styles.userIcon}><img src="icons/user-circle.svg" alt="User" /></span>
+              <a href="https://sourc.nl/#contact" target="_blank" rel="noopener noreferrer" className={styles.sourceButton}>START WITH SOURCES</a>
               <div className={styles.languageSelector}>
                 <span>EN 🇬🇧</span>
               </div>
@@ -221,7 +221,7 @@ const CustomerProfile = () => {
               
               <div className={dashboardStyles.sidebarFooter}>
                 <div className={dashboardStyles.logoutItem} onClick={handleLogout}>
-                  <span className={dashboardStyles.icon}>🚪</span>
+                  <span className={dashboardStyles.icon}><img src="icons/logout.svg" alt="Logout" /></span>
                   <span>Log out</span>
                 </div>
               </div>
