@@ -1,5 +1,5 @@
 import styles from './Footer.module.css';
-
+import Link from 'next/link';
 const Footer = () => {
   return (
     <footer className={styles.footer}>
@@ -11,10 +11,10 @@ const Footer = () => {
             </div>
             
             <nav className={styles.nav}>
-              <a href="#" className={styles.navLink}>About Us</a>
-              <a href="#" className={styles.navLink}>Services</a>
-              <a href="#" className={styles.navLink}>Process</a>
-              <a href="#" className={styles.navLink}>Team</a>
+              <Link href="#" className={styles.navLink}>About Us</Link>
+              <Link href="#" className={styles.navLink}>Services</Link>
+              <Link href="#" className={styles.navLink}>Process</Link>
+              <Link href="#" className={styles.navLink}>Team</Link>
             </nav>
             
             <div className={styles.contact}>
@@ -49,9 +49,9 @@ const Footer = () => {
             © Sourc. All rights reserved.
           </div>
           <div className={styles.legal}>
-            <a href="#" className={styles.legalLink}>Terms</a>
-            <a href="#" className={styles.legalLink}>Privacy</a>
-            <a href="#" className={styles.legalLink}>Cookies</a>
+              <Link href="#" className={styles.legalLink}>Terms</Link>
+            <Link href="#" className={styles.legalLink}>Privacy</Link>
+            <Link href="#" className={styles.legalLink}>Cookies</Link>
             <div className={styles.language}>
               EN 🇬🇧
             </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from './Header.module.css';
-
+import Link from 'next/link';
 const Header = ({ onMobileMenuToggle }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -25,11 +25,11 @@ const Header = ({ onMobileMenuToggle }) => {
         </div>
         
         <nav className={styles.nav}>
-          <a href="#" className={styles.navLink}>About Us</a>
-          <a href="#" className={styles.navLink}>Services</a>
-          <a href="#" className={styles.navLink}>Process</a>
-          <a href="#" className={styles.navLink}>Team</a>
-          <a href="/login" className={`${styles.navLink} ${styles.adminPortal}`}>Admin Portal</a>
+          <Link href="#" className={styles.navLink}>About Us</Link>
+          <Link href="#" className={styles.navLink}>Services</Link>
+          <Link href="#" className={styles.navLink}>Process</Link>
+          <Link href="#" className={styles.navLink}>Team</Link>
+          <Link href="/login" className={`${styles.navLink} ${styles.adminPortal}`}>Admin Portal</Link>
         </nav>
         
         <div className={styles.actions}>
@@ -52,11 +52,11 @@ const Header = ({ onMobileMenuToggle }) => {
       {isMobileMenuOpen && (
         <div className={styles.mobileMenu}>
           <nav className={styles.mobileNav}>
-            <a href="#" className={styles.mobileNavLink}>About Us</a>
-            <a href="#" className={styles.mobileNavLink}>Services</a>
-            <a href="#" className={styles.mobileNavLink}>Process</a>
-            <a href="#" className={styles.mobileNavLink}>Team</a>
-            <a href="/login" className={`${styles.mobileNavLink} ${styles.adminPortal}`}>Admin Portal</a>
+            <Link href="#" className={styles.mobileNavLink}>About Us</Link>
+            <Link href="#" className={styles.mobileNavLink}>Services</Link>
+            <Link href="#" className={styles.mobileNavLink}>Process</Link>
+            <Link href="#" className={styles.mobileNavLink}>Team</Link>
+            <Link href="/login" className={`${styles.mobileNavLink} ${styles.adminPortal}`}>Admin Portal</Link>
           </nav>
           <div className={styles.mobileActions}>
             <button className={styles.mobileCtaButton}>

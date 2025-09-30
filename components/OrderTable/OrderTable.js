@@ -135,7 +135,7 @@ const OrderTable = ({ onViewOrderDetails, orders = [], isLoading = false, onRefr
           <div className={styles.emptyIcon}>📦</div>
           <h4 className={styles.emptyTitle}>No Orders Found</h4>
           <p className={styles.emptyText}>
-            You don't have any orders yet. Orders created by our team will appear here.
+            You don&apos;t have any orders yet. Orders created by our team will appear here.
           </p>
         </div>
       </div>
