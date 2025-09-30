@@ -538,10 +538,20 @@
   
   .headerContent {
     padding: 0 1rem;
+    display: flex;
+    align-items: center;
   }
   
   .nav {
     display: none;
+  }
+  /* Hide header right-side actions on mobile; they appear in the drawer */
+  .headerActions {
+    display: none;
+  }
+  /* Position logo left and hamburger right on mobile */
+  .logo {
+    order: 1;
   }
   
   .sidebar {

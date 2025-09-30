@@ -46,9 +46,9 @@ const AdminHeader = () => {
           <div className={styles.userInfo}>
             <span className={styles.adminText}>Welcome, {user?.name || 'Admin'}</span>
             <div className={styles.userProfile} onClick={toggleUserMenu}>
-              <div className={styles.userIcon}>
-                <span><img src="icons/user-circle.svg" alt="User" /></span>
-              </div>
+              
+                <img src="icons/user-circle.svg" alt="User" />
+              
               <span className={styles.userName}>{user?.name || 'Admin'}</span>
               <span className={styles.dropdown}>▼</span>
             </div>

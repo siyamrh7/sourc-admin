@@ -7,6 +7,7 @@ import dashboardStyles from '../styles/CustomerDashboard.module.css';
 import Footer from '../components/Footer/Footer';
 import { logout, getCurrentCustomer } from '../store/actions/customerAuthActions';
 import API, { customerAuthAPI } from '../services/api';
+import loginStyles from '../styles/Login.module.css';
 
 const CustomerProfile = () => {
   const router = useRouter();
@@ -37,6 +38,7 @@ const CustomerProfile = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [address, setAddress] = useState('');
   const [mounted, setMounted] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -181,9 +183,12 @@ const CustomerProfile = () => {
       </Head>
 
       <div className={dashboardStyles.dashboardContainer}>
-        {/* Header (kept from profile as requested) */}
+        {/* Header (kept layout) with drawer trigger */}
         <header className={styles.header}>
           <div className={styles.headerContent}>
+            <button className={loginStyles.mobileMenuButton} onClick={() => setIsDrawerOpen(true)} aria-label="Open menu">
+              <span className={loginStyles.hamburger}>≡</span>
+            </button>
             <div className={styles.logo}>sourc.</div>
             <nav className={styles.nav}>
               <a href="https://sourc.nl/#over-ons" target="_blank" rel="noopener noreferrer">About Us</a>
@@ -200,6 +205,30 @@ const CustomerProfile = () => {
             </div>
           </div>
         </header>
+
+        {/* Drawer - reuse login drawer styles for consistency */}
+        {isDrawerOpen && (
+          <>
+            <div className={loginStyles.drawerOverlay} onClick={() => setIsDrawerOpen(false)} />
+            <div className={`${loginStyles.drawer} ${loginStyles.drawerOpen}`} role="dialog" aria-modal="true">
+              <div className={loginStyles.drawerHeader}>
+                <div className={loginStyles.drawerTitle}>Menu</div>
+                <button className={loginStyles.drawerCloseBtn} onClick={() => setIsDrawerOpen(false)} aria-label="Close menu">×</button>
+              </div>
+              <nav className={loginStyles.drawerNav}>
+                <a href="https://sourc.nl/#over-ons" target="_blank" rel="noopener noreferrer" className={loginStyles.drawerNavLink} onClick={() => setIsDrawerOpen(false)}>About Us</a>
+                <a href="https://sourc.nl/#diensten" target="_blank" rel="noopener noreferrer" className={loginStyles.drawerNavLink} onClick={() => setIsDrawerOpen(false)}>Services</a>
+                <a href="https://sourc.nl/#proces" target="_blank" rel="noopener noreferrer" className={loginStyles.drawerNavLink} onClick={() => setIsDrawerOpen(false)}>Process</a>
+                <a href="https://sourc.nl/#team" target="_blank" rel="noopener noreferrer" className={loginStyles.drawerNavLink} onClick={() => setIsDrawerOpen(false)}>Team</a>
+              </nav>
+              <div className={loginStyles.drawerActions}>
+                <span className={styles.userIcon}><img src="icons/user-circle.svg" alt="User" /></span>
+                <a href="https://sourc.nl/#contact" target="_blank" rel="noopener noreferrer" className={styles.sourceButton}>START WITH SOURCES</a>
+                <div className={styles.languageSelector}>EN 🇬🇧</div>
+              </div>
+            </div>
+          </>
+        )}
 
         <div className={dashboardStyles.dashboardLayout}>
           {/* Sidebar (dashboard styles) */}

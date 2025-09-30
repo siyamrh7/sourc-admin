@@ -3,6 +3,7 @@
   border-radius: 0.75rem;
   padding: 1.5rem;
   border: 1px solid #e5e7eb;
+  overflow-x: auto; /* enable horizontal scroll if wrapper is constrained */
 }
 
 .tableHeader {
@@ -56,7 +57,7 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 800px;
+  min-width: 1000px; /* ensure columns don't squeeze and allow horizontal scroll */
 }
 
 .table th {

@@ -18,6 +18,7 @@ export default function Login() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -76,9 +77,12 @@ export default function Login() {
       </Head>
 
       <div className={styles.container}>
-        {/* Header */}
+        {/* Header with drawer trigger (keeps current layout) */}
         <header className={styles.header}>
           <div className={styles.headerContainer}>
+            <button className={styles.mobileMenuButton} onClick={() => setIsDrawerOpen(true)} aria-label="Open menu">
+              <span className={styles.hamburger}>≡</span>
+            </button>
             <Link href="/" className={styles.logo}>
               <span className={styles.logoText}>sourc.</span>
             </Link>
@@ -103,6 +107,33 @@ export default function Login() {
             </div>
           </div>
         </header>
+
+        {/* Drawer - mobile only */}
+        {isDrawerOpen && (
+          <>
+            <div className={styles.drawerOverlay} onClick={() => setIsDrawerOpen(false)} />
+            <div className={`${styles.drawer} ${styles.drawerOpen}`} role="dialog" aria-modal="true">
+              <div className={styles.drawerHeader}>
+                <div className={styles.drawerTitle}>Menu</div>
+                <button className={styles.drawerCloseBtn} onClick={() => setIsDrawerOpen(false)} aria-label="Close menu">×</button>
+              </div>
+              <nav className={styles.drawerNav}>
+                <Link href="https://sourc.nl/#over-ons" target="_blank" rel="noopener noreferrer" className={styles.drawerNavLink} onClick={() => setIsDrawerOpen(false)}>About Us</Link>
+                <Link href="https://sourc.nl/#diensten" target="_blank" rel="noopener noreferrer" className={styles.drawerNavLink} onClick={() => setIsDrawerOpen(false)}>Services</Link>
+                <Link href="https://sourc.nl/#proces" target="_blank" rel="noopener noreferrer" className={styles.drawerNavLink} onClick={() => setIsDrawerOpen(false)}>Process</Link>
+                <Link href="https://sourc.nl/#team" target="_blank" rel="noopener noreferrer" className={styles.drawerNavLink} onClick={() => setIsDrawerOpen(false)}>Team</Link>
+                <Link href="/login" className={styles.drawerNavLink} onClick={() => setIsDrawerOpen(false)}>Admin Portal</Link>
+              </nav>
+              <div className={styles.drawerActions}>
+                <div className={styles.userIcon}><span><img src="icons/user-circle.svg" alt="User" /></span></div>
+                <a href="https://sourc.nl/#contact" target="_blank" rel="noopener noreferrer" className={styles.ctaButton}>
+                  START WITH SOURCES
+                </a>
+                <div className={styles.language}>EN 🇬🇧</div>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Main Content */}
         <main className={styles.main}>

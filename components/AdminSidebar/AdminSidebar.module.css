@@ -87,7 +87,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #dc2626;
+  background: rgba(149, 225, 212, 1);
   border-radius: 50%;
   box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
 }

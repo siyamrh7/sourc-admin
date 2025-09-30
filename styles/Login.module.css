@@ -88,6 +88,88 @@
   cursor: pointer;
 }
 
+/* Drawer and mobile trigger */
+.mobileMenuButton {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.hamburger {
+  font-size: 1.5rem;
+  color: #374151;
+}
+
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 80%;
+  max-width: 360px;
+  background: #ffffff;
+  box-shadow: -4px 0 16px rgba(0,0,0,0.15);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+}
+
+.drawerOpen {
+  transform: translateX(0);
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.drawerTitle {
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.drawerCloseBtn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #374151;
+}
+
+.drawerNav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.drawerNavLink {
+  padding: 0.75rem 0.25rem;
+  border-bottom: 1px solid #f3f4f6;
+  color: #111827;
+  font-weight: 500;
+}
+
+.drawerActions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 /* Main Content */
 .main {
   flex: 1;
@@ -411,6 +493,18 @@
   
   .nav {
     display: none;
+  }
+  /* Hide header right-side actions on mobile; we show them in the drawer instead */
+  .headerActions {
+    display: none;
+  }
+  .mobileMenuButton {
+    display: block;
+    order: 3;
+    margin-left: auto; /* push to the far right */
+  }
+  .logo {
+    order: 1;
   }
   
   .headerActions {

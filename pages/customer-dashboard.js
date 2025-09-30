@@ -20,8 +20,15 @@ export default function CustomerDashboard() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Check authentication on mount
+  useEffect(() => {
+    // Ensure consistent SSR/CSR markup by rendering after mount
+    setIsMounted(true);
+  }, []);
+
   useEffect(() => {
     const checkAuthentication = async () => {
       if (typeof window === 'undefined') {
@@ -149,6 +156,11 @@ export default function CustomerDashboard() {
 
   // Keep layout visible; show loading only in main content
 
+  // Avoid hydration mismatch by waiting until mounted
+  if (!isMounted) {
+    return null;
+  }
+
   // Don't render anything if not authenticated (will redirect)
   if (!isAuthenticated) {
     return null;
@@ -167,6 +179,9 @@ export default function CustomerDashboard() {
         {/* Unified Header (from customer-profile) */}
         <header className={profileStyles.header}>
           <div className={profileStyles.headerContent}>
+            <button className={styles.mobileMenuButton} onClick={() => setIsDrawerOpen(true)} aria-label="Open menu">
+              <span className={styles.hamburger}>≡</span>
+            </button>
             <div className={profileStyles.logo}>sourc.</div>
             <nav className={profileStyles.nav}>
               <a href="https://sourc.nl/#over-ons" target="_blank" rel="noopener noreferrer">About Us</a>
@@ -174,15 +189,33 @@ export default function CustomerDashboard() {
               <a href="https://sourc.nl/#proces" target="_blank" rel="noopener noreferrer">Process</a>
               <a href="https://sourc.nl/#team" target="_blank" rel="noopener noreferrer">Team</a>
             </nav>
-            <div className={profileStyles.headerActions}>
-              <span className={profileStyles.userIcon}><img src="icons/user-circle.svg" alt="User" /></span>
-              <a href="https://sourc.nl/#contact" target="_blank" rel="noopener noreferrer" className={profileStyles.sourceButton}>START WITH SOURCES</a>
-              <div className={profileStyles.languageSelector}>
-                <span>EN 🇬🇧</span>
-              </div>
-            </div>
+            
           </div>
         </header>
+
+        {/* Drawer - mobile only (reuses Login styles for consistency) */}
+        {isDrawerOpen && (
+          <>
+            <div className={styles.drawerOverlay} onClick={() => setIsDrawerOpen(false)} />
+            <div className={`${styles.drawer} ${styles.drawerOpen}`} role="dialog" aria-modal="true">
+              <div className={styles.drawerHeader}>
+                <div className={styles.drawerTitle}>Menu</div>
+                <button className={styles.drawerCloseBtn} onClick={() => setIsDrawerOpen(false)} aria-label="Close menu">×</button>
+              </div>
+              <nav className={styles.drawerNav}>
+                <a href="https://sourc.nl/#over-ons" target="_blank" rel="noopener noreferrer" className={styles.drawerNavLink} onClick={() => setIsDrawerOpen(false)}>About Us</a>
+                <a href="https://sourc.nl/#diensten" target="_blank" rel="noopener noreferrer" className={styles.drawerNavLink} onClick={() => setIsDrawerOpen(false)}>Services</a>
+                <a href="https://sourc.nl/#proces" target="_blank" rel="noopener noreferrer" className={styles.drawerNavLink} onClick={() => setIsDrawerOpen(false)}>Process</a>
+                <a href="https://sourc.nl/#team" target="_blank" rel="noopener noreferrer" className={styles.drawerNavLink} onClick={() => setIsDrawerOpen(false)}>Team</a>
+              </nav>
+              <div className={styles.drawerActions}>
+              <span className={profileStyles.userIcon}><img src="icons/user-circle.svg" alt="User" /></span>
+                <a href="https://sourc.nl/#contact" target="_blank" rel="noopener noreferrer" className={styles.ctaButton}>START WITH SOURCES</a>
+                <div className={styles.language}>EN 🇬🇧</div>
+              </div>
+            </div>
+          </>
+        )}
         
         <div className={styles.dashboardLayout}>
           {/* Sidebar */}

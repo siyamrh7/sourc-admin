@@ -50,23 +50,28 @@ const Header = ({ onMobileMenuToggle }) => {
       </div>
       
       {isMobileMenuOpen && (
-        <div className={styles.mobileMenu}>
-          <nav className={styles.mobileNav}>
-            <Link href="https://sourc.nl/#over-ons" target="_blank" rel="noopener noreferrer" className={styles.mobileNavLink}>About Us</Link>
-            <Link href="https://sourc.nl/#diensten" target="_blank" rel="noopener noreferrer" className={styles.mobileNavLink}>Services</Link>
-            <Link href="https://sourc.nl/#proces" target="_blank" rel="noopener noreferrer" className={styles.mobileNavLink}>Process</Link>
-            <Link href="https://sourc.nl/#team" target="_blank" rel="noopener noreferrer" className={styles.mobileNavLink}>Team</Link>
-            <Link href="/login" className={`${styles.mobileNavLink} ${styles.adminPortal}`}>Admin Portal</Link>
-          </nav>
-          <div className={styles.mobileActions}>
-            <a href="https://sourc.nl/#contact" target="_blank" rel="noopener noreferrer" className={styles.mobileCtaButton}>
-              START WITH SOURCES
-            </a>
-            <div className={styles.mobileLanguage}>
-              EN 🇬🇧
+        <>
+          <div className={styles.drawerOverlay} onClick={toggleMobileMenu} />
+          <div className={`${styles.drawer} ${styles.drawerOpen}`} role="dialog" aria-modal="true">
+            <div className={styles.drawerHeader}>
+              <div className={styles.drawerTitle}>Menu</div>
+              <button className={styles.drawerCloseBtn} onClick={toggleMobileMenu} aria-label="Close menu">×</button>
+            </div>
+            <nav className={styles.drawerNav}>
+              <Link href="https://sourc.nl/#over-ons" target="_blank" rel="noopener noreferrer" className={styles.drawerNavLink} onClick={toggleMobileMenu}>About Us</Link>
+              <Link href="https://sourc.nl/#diensten" target="_blank" rel="noopener noreferrer" className={styles.drawerNavLink} onClick={toggleMobileMenu}>Services</Link>
+              <Link href="https://sourc.nl/#proces" target="_blank" rel="noopener noreferrer" className={styles.drawerNavLink} onClick={toggleMobileMenu}>Process</Link>
+              <Link href="https://sourc.nl/#team" target="_blank" rel="noopener noreferrer" className={styles.drawerNavLink} onClick={toggleMobileMenu}>Team</Link>
+              <Link href="/login" className={`${styles.drawerNavLink} ${styles.adminPortal}`} onClick={toggleMobileMenu}>Admin Portal</Link>
+            </nav>
+            <div className={styles.drawerActions}>
+              <a href="https://sourc.nl/#contact" target="_blank" rel="noopener noreferrer" className={styles.mobileCtaButton}>
+                START WITH SOURCES
+              </a>
+              <div className={styles.mobileLanguage}>EN 🇬🇧</div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </header>
   );
