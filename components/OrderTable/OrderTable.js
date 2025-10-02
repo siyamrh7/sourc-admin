@@ -50,28 +50,20 @@ const OrderTable = ({ onViewOrderDetails, orders = [], isLoading = false, onRefr
   };
 
   const getCurrentPhase = (order) => {
-    // Try to get current phase from order.currentPhase
+    // Prefer exact title from timeline at progress.current
+    if (order.timeline && Array.isArray(order.timeline) && order.timeline.length > 0) {
+      const total = order.timeline.length;
+      const current = Math.min(Math.max(order.progress?.current || 1, 1), total);
+      const index = current - 1;
+      return order.timeline[index]?.title || order.timeline[total - 1]?.title || 'Offer Accepted';
+    }
+
+    // Fallback to backend-provided currentPhase
     if (order.currentPhase) {
       return order.currentPhase;
     }
 
-    // Fallback: Get current phase from timeline based on progress
-    if (order.timeline && Array.isArray(order.timeline) && order.timeline.length > 0) {
-      const currentProgress = order.progress?.current || 1;
-      const currentStepIndex = Math.max(0, currentProgress - 1);
-      
-      // Find the current step
-      if (order.timeline[currentStepIndex]) {
-        return order.timeline[currentStepIndex].title;
-      }
-      
-      // If progress is beyond timeline length, return last step
-      if (currentProgress > order.timeline.length) {
-        return order.timeline[order.timeline.length - 1].title;
-      }
-    }
-
-    // Default phases based on status
+    // Final fallback based on status
     switch (order.status?.toLowerCase()) {
       case 'development':
         return 'Mold / Product in Development';
@@ -193,12 +185,12 @@ const OrderTable = ({ onViewOrderDetails, orders = [], isLoading = false, onRefr
                   <span className={styles.mobileLabel}>Progress</span>
                   <div className={styles.mobileProgressContainer}>
                     <div className={styles.progressBar}>
-                      <div 
-                        className={`${styles.progressFill} ${getProgressBarColor(order.progress, order.total)}`}
-                        style={{ width: `${(order.progress / order.total) * 100}%` }}
-                      ></div>
+                    <div 
+                      className={`${styles.progressFill} ${getProgressBarColor(order.progress, order.total)}`}
+                      style={{ width: `${(((order.progress || 1) / (order.total || 7)) * 100)}%` }}
+                    ></div>
                     </div>
-                    <span className={styles.progressText}>{order.progress}/{order.total}</span>
+                  <span className={styles.progressText}>{order.progress || 1}/{order.total || 7}</span>
                   </div>
                 </div>
                 <div className={styles.mobileOrderRow}>

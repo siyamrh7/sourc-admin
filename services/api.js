@@ -76,6 +76,7 @@ export const ordersAPI = {
   createOrder: (orderData) => API.post('/orders', orderData),
   updateOrder: (orderId, orderData) => API.put(`/orders/${orderId}`, orderData),
   deleteOrder: (orderId) => API.delete(`/orders/${orderId}`),
+  hardDeleteOrder: (orderId) => API.delete(`/orders/${orderId}/hard`),
   advanceOrder: (orderId) => API.patch(`/orders/${orderId}/advance`),
   updateOrderPhase: (orderId, phaseData) => API.patch(`/orders/${orderId}/phase`, phaseData),
   getOrderStats: () => API.get('/orders/stats'),

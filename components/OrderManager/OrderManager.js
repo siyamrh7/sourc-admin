@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchOrders, deleteOrder, updateOrder } from '../../store/actions/orderActions';
+import { fetchOrders, deleteOrder, updateOrder, hardDeleteOrder } from '../../store/actions/orderActions';
 import styles from './OrderManager.module.css';
 
 const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
@@ -566,10 +566,10 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
                   <div className={styles.progressBar}>
                     <div 
                       className={styles.progressFill}
-                      style={{ width: `${((order.progress?.current || 1) / 7) * 100}%` }}
+                      style={{ width: `${(((order.progress?.current || 1) / (order.progress?.total || 7)) * 100)}%` }}
                     ></div>
                   </div>
-                  <span className={styles.progressText}>{order.progress?.current || 1}/7</span>
+                  <span className={styles.progressText}>{order.progress?.current || 1}/{order.progress?.total || 7}</span>
                 </div>
               </div>
               <div className={styles.contentRow}>
@@ -592,9 +592,25 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
               <button
                 onClick={() => handleAdvancePhase(order)}
                 className={styles.advanceButton}
-                disabled={(order.progress?.current || 1) >= 7}
+                disabled={(order.progress?.current || 1) >= (order.progress?.total || 7)}
               >
                 Advance Phase
+              </button>
+              <button
+                onClick={async () => {
+                  if (!confirm(`Permanently delete order ${order.orderId}? This cannot be undone.`)) return;
+                  const result = await dispatch(hardDeleteOrder(order.orderId));
+                  if (result.success) {
+                    alert(`Order ${order.orderId} was permanently deleted.`);
+                    dispatch(fetchOrders());
+                  } else {
+                    alert(result.error || 'Failed to permanently delete order.');
+                  }
+                }}
+                className={styles.deleteButton}
+                title="Delete Permanently"
+              >
+                Delete
               </button>
             </div>
           </div>

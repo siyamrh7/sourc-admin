@@ -156,49 +156,16 @@ const OrderDetails = ({ orderData = null, onBack }) => {
   const transformedTimelineData = (() => {
     // Check if real timeline data exists and is valid
     if (orderData?.timeline && Array.isArray(orderData.timeline) && orderData.timeline.length > 0) {
-      // Use real timeline data from the order
-      return orderData.timeline.map((step, index) => {
-        // Determine the actual status based on boolean flags or explicit status
-        let isCompleted = step.isCompleted || false;
-        let isInProgress = step.isInProgress || false;
-        let isLocked = true; // Default to locked
-        
-                 // If step has explicit boolean values, use them
-         if (step.hasOwnProperty('isCompleted') || step.hasOwnProperty('isInProgress') || step.hasOwnProperty('isLocked')) {
-           isCompleted = step.isCompleted || false;
-           isInProgress = step.isInProgress || false;
-           isLocked = step.isLocked === true; // Only lock if explicitly set to true
-        } else {
-          // Determine status based on order progress if no explicit flags
-          const currentProgress = orderData?.progress?.current || 1;
-          const stepPosition = index + 1;
-          
-          if (stepPosition < currentProgress) {
-            isCompleted = true;
-            isInProgress = false;
-            isLocked = false;
-          } else if (stepPosition === currentProgress) {
-            isCompleted = false;
-            isInProgress = true;
-            isLocked = false;
-          } else {
-            isCompleted = false;
-            isInProgress = false;
-            isLocked = true;
-          }
-        }
+      // Always derive visual state from progress to avoid mismatches
+      const currentProgress = orderData?.progress?.current || 1;
+      return orderData.timeline.slice(0, 7).map((step, index) => {
+        const stepPosition = index + 1;
+        const isCompleted = stepPosition < currentProgress;
+        const isInProgress = stepPosition === currentProgress;
+        const isLocked = stepPosition > currentProgress;
 
-        // Determine status string and icon based on boolean flags
-        let status = 'Locked';
-        let icon = '🔒';
-        
-        if (isCompleted) {
-          status = 'Completed';
-          icon = '✓';
-        } else if (isInProgress) {
-          status = 'In Progress';
-          icon = '🕒';
-        }
+        const status = isCompleted ? 'Completed' : isInProgress ? 'In Progress' : 'Locked';
+        const icon = isCompleted ? '✓' : isInProgress ? '🕒' : '🔒';
 
         return {
           id: step.id || (index + 1),
@@ -207,11 +174,11 @@ const OrderDetails = ({ orderData = null, onBack }) => {
           estimatedDuration: step.estimatedDuration || defaultTimelineData[index]?.estimatedDuration || '',
           startDate: step.startDate ? formatDate(step.startDate) : (defaultTimelineData[index]?.startDate || ''),
           finishDate: step.finishDate ? formatDate(step.finishDate) : (defaultTimelineData[index]?.finishDate || ''),
-          status: step.status || status,
-          icon: icon,
-          isCompleted: isCompleted,
-          isInProgress: isInProgress,
-          isLocked: isLocked
+          status,
+          icon,
+          isCompleted,
+          isInProgress,
+          isLocked
         };
       });
     } else {
@@ -259,6 +226,14 @@ const OrderDetails = ({ orderData = null, onBack }) => {
     }
   })();
 
+  // Compute current step index and total for display
+  const currentStep = (() => {
+    if (orderData?.progress?.current) return Math.min(Math.max(orderData.progress.current, 1), 7);
+    const activeIndex = transformedTimelineData.findIndex(step => step.isInProgress);
+    return activeIndex !== -1 ? activeIndex + 1 : 1;
+  })();
+  const totalSteps = 7;
+
   return (
     <div className={styles.orderDetails}>
       <div className={styles.header}>
@@ -277,7 +252,10 @@ const OrderDetails = ({ orderData = null, onBack }) => {
       <OrderInfoCards orderData={transformedOrderData} />
       
       <div className={styles.timelineSection}>
-        <h2 className={styles.timelineTitle}>Order Progress Timeline</h2>
+        <div className={styles.timelineHeaderRow}>
+          <h2 className={styles.timelineTitle}>Order Progress Timeline</h2>
+          <span className={styles.stepBadge}>Step {currentStep} of {totalSteps}</span>
+        </div>
         <OrderTimeline timelineData={transformedTimelineData} />
       </div>
     </div>

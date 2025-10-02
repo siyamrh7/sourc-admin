@@ -186,6 +186,38 @@ export const deleteOrder = (orderId) => {
   };
 };
 
+// Hard Delete Order
+export const hardDeleteOrder = (orderId) => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: DELETE_ORDER_START });
+
+      const response = await ordersAPI.hardDeleteOrder(orderId);
+
+      if (response.data.success) {
+        dispatch({
+          type: DELETE_ORDER_SUCCESS,
+          payload: orderId
+        });
+        return { success: true };
+      } else {
+        dispatch({
+          type: DELETE_ORDER_FAILURE,
+          payload: response.data.error || 'Failed to delete order permanently'
+        });
+        return { success: false, error: response.data.error };
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to delete order permanently';
+      dispatch({
+        type: DELETE_ORDER_FAILURE,
+        payload: errorMessage
+      });
+      return { success: false, error: errorMessage };
+    }
+  };
+};
+
 // Advance Order Phase
 export const advanceOrderPhase = (orderId) => {
   return async (dispatch) => {
