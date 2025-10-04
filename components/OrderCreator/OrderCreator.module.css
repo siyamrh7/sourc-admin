@@ -489,4 +489,193 @@
   .subSectionTitle {
     font-size: 0.875rem;
   }
+}
+
+/* Products Management Styles */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.addProductButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.addProductButton:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.addIcon {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.productsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.productCard {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.2s;
+}
+
+.productCard:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.productHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.productTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.removeProductButton {
+  background: #ef4444;
+  color: white;
+  border: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.removeProductButton:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+.removeIcon {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.productForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.productForm .formGroup {
+  margin-bottom: 0;
+}
+
+.productForm .formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.totalValueSection {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.totalValueCard {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
+}
+
+.totalValueTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  opacity: 0.9;
+}
+
+.totalValueAmount {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Mobile adjustments for products */
+@media (max-width: 768px) {
+  .sectionHeader {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .addProductButton {
+    justify-content: center;
+  }
+  
+  .productCard {
+    padding: 1.25rem;
+  }
+  
+  .productForm .formRow {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .totalValueAmount {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .productCard {
+    padding: 1rem;
+  }
+  
+  .productTitle {
+    font-size: 0.875rem;
+  }
+  
+  .totalValueCard {
+    padding: 1.25rem;
+  }
+  
+  .totalValueTitle {
+    font-size: 0.875rem;
+  }
+  
+  .totalValueAmount {
+    font-size: 1.25rem;
+  }
 } 

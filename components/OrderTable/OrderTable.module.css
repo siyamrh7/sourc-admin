@@ -109,19 +109,19 @@
 }
 
 .progressLow {
-  background: #ef4444;
+  background: #3b82f6; /* Blue */
 }
 
 .progressMedium {
-  background: #f59e0b;
+  background: #f59e0b; /* Orange */
 }
 
 .progressHigh {
-  background: #10b981;
+  background: #10b981; /* Green */
 }
 
 .progressComplete {
-  background: #059669;
+  background: #059669; /* Dark Green */
 }
 
 .progressText {

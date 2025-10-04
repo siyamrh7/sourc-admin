@@ -12,11 +12,16 @@ const OrderCreator = ({ onBack, preselectedCustomerId }) => {
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [formData, setFormData] = useState({
-    // Product Information
-    product: '',
-    productDescription: '',
-    quantity: '',
-    value: '',
+    // Products Information - now supports multiple products
+    products: [
+      {
+        id: 1,
+        name: '',
+        description: '',
+        quantity: '',
+        value: ''
+      }
+    ],
     
     // Shipping Information
     destination: '',
@@ -249,15 +254,85 @@ const OrderCreator = ({ onBack, preselectedCustomerId }) => {
     }));
   };
 
+  // Product management functions
+  const addProduct = () => {
+    const newProductId = Math.max(...formData.products.map(p => p.id), 0) + 1;
+    setFormData(prev => ({
+      ...prev,
+      products: [
+        ...prev.products,
+        {
+          id: newProductId,
+          name: '',
+          description: '',
+          quantity: '',
+          value: ''
+        }
+      ]
+    }));
+  };
+
+  const removeProduct = (productId) => {
+    if (formData.products.length > 1) {
+      setFormData(prev => ({
+        ...prev,
+        products: prev.products.filter(product => product.id !== productId)
+      }));
+    }
+  };
+
+  const updateProduct = (productId, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      products: prev.products.map(product =>
+        product.id === productId ? { ...product, [field]: value } : product
+      )
+    }));
+  };
+
+  // Calculate total order value
+  const calculateTotalValue = () => {
+    return formData.products.reduce((total, product) => {
+      const value = parseFloat(product.value) || 0;
+      return total + value;
+    }, 0);
+  };
+
   const validateForm = () => {
     const errors = {};
 
     if (!selectedCustomerId) errors.customer = 'Please select a customer';
-    if (!formData.product.trim()) errors.product = 'Product name is required';
-    if (!formData.quantity.trim()) errors.quantity = 'Quantity is required';
-    if (!formData.value.trim()) errors.value = 'Order value is required';
     if (!formData.destination.trim()) errors.destination = 'Destination is required';
     if (!formData.estimatedArrival.trim()) errors.estimatedArrival = 'Estimated arrival date is required';
+
+    // Validate products
+    const productErrors = {};
+    formData.products.forEach((product) => {
+      const pErrors = {};
+      const name = (product.name || '').trim();
+      if (!name) {
+        pErrors.name = 'Product name is required';
+      } else if (name.length < 2 || name.length > 200) {
+        pErrors.name = 'Product name must be between 2 and 200 characters';
+      }
+
+      if (!String(product.quantity || '').trim()) pErrors.quantity = 'Product quantity is required';
+      if (!String(product.value || '').trim()) pErrors.value = 'Order value is required';
+      
+      if (Object.keys(pErrors).length > 0) {
+        errors[`product_${product.id}`] = pErrors;
+      }
+    });
+
+    // Check if at least one product has all required fields
+    const hasValidProduct = formData.products.some(product => {
+      const name = (product.name || '').trim();
+      return name && name.length >= 2 && name.length <= 200 && String(product.quantity || '').trim() && String(product.value || '').trim();
+    });
+    
+    if (!hasValidProduct) {
+      errors.products = 'At least one complete product is required';
+    }
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -281,12 +356,10 @@ const OrderCreator = ({ onBack, preselectedCustomerId }) => {
           phone: selectedCustomer.phone,
           company: selectedCustomer.company
         },
-        product: {
-          name: formData.product,
-          description: formData.productDescription,
-          quantity: formData.quantity,
-          value: formData.value
-        },
+        products: formData.products.filter(product => 
+          product.name.trim() && product.quantity.trim() && product.value.trim()
+        ),
+        totalValue: calculateTotalValue(),
         shipping: {
           destination: formData.destination,
           method: formData.shippingMethod,
@@ -398,80 +471,132 @@ const OrderCreator = ({ onBack, preselectedCustomerId }) => {
             )}
           </div>
 
-          {/* Product Information */}
+          {/* Products Information */}
           <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>Product Information</h2>
-            <div className={styles.formGroup}>
-              <label className={styles.label} htmlFor="product">
-                Product Name *
-              </label>
-              <input
-                type="text"
-                id="product"
-                name="product"
-                value={formData.product}
-                onChange={handleInputChange}
-                className={`${styles.input} ${validationErrors.product ? styles.error : ''}`}
-                required
-                placeholder="e.g., Custom Injection Parts"
-              />
-              {validationErrors.product && (
-                <span className={styles.errorMessage}>{validationErrors.product}</span>
-              )}
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>Products Information</h2>
+              <button
+                type="button"
+                onClick={addProduct}
+                className={styles.addProductButton}
+              >
+                <span className={styles.addIcon}>+</span>
+                Add Product
+              </button>
             </div>
 
-            <div className={styles.formGroup}>
-              <label className={styles.label} htmlFor="productDescription">
-                Product Description
-              </label>
-              <textarea
-                id="productDescription"
-                name="productDescription"
-                value={formData.productDescription}
-                onChange={handleInputChange}
-                className={styles.textarea}
-                rows="3"
-                placeholder="Detailed description of the product specifications, materials, requirements..."
-              />
-            </div>
-            
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label className={styles.label} htmlFor="quantity">
-                  Quantity *
-                </label>
-                <input
-                  type="text"
-                  id="quantity"
-                  name="quantity"
-                  value={formData.quantity}
-                  onChange={handleInputChange}
-                  className={`${styles.input} ${validationErrors.quantity ? styles.error : ''}`}
-                  required
-                  placeholder="e.g., 5,000 units"
-                />
-                {validationErrors.quantity && (
-                  <span className={styles.errorMessage}>{validationErrors.quantity}</span>
-                )}
+            {validationErrors.products && (
+              <div className={styles.errorBanner}>
+                <span className={styles.errorIcon}>❌</span>
+                {validationErrors.products}
               </div>
-              
-              <div className={styles.formGroup}>
-                <label className={styles.label} htmlFor="value">
-                  Order Value *
-                </label>
-                <input
-                  type="text"
-                  id="value"
-                  name="value"
-                  value={formData.value}
-                  onChange={handleInputChange}
-                  className={`${styles.input} ${validationErrors.value ? styles.error : ''}`}
-                  required
-                  placeholder="e.g., €25,000"
-                />
-                {validationErrors.value && (
-                  <span className={styles.errorMessage}>{validationErrors.value}</span>
-                )}
+            )}
+
+            <div className={styles.productsList}>
+              {formData.products.map((product, index) => (
+                <div key={product.id} className={styles.productCard}>
+                  <div className={styles.productHeader}>
+                    <h3 className={styles.productTitle}>
+                      Product {index + 1}
+                      {formData.products.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeProduct(product.id)}
+                          className={styles.removeProductButton}
+                          title="Remove Product"
+                        >
+                          <span className={styles.removeIcon}>×</span>
+                        </button>
+                      )}
+                    </h3>
+                  </div>
+
+                  <div className={styles.productForm}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.label}>
+                        Product Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={product.name}
+                        onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
+                        className={`${styles.input} ${
+                          validationErrors[`product_${product.id}`]?.name ? styles.error : ''
+                        }`}
+                        placeholder="e.g., Custom Injection Parts"
+                      />
+                      {validationErrors[`product_${product.id}`]?.name && (
+                        <span className={styles.errorMessage}>
+                          {validationErrors[`product_${product.id}`].name}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label className={styles.label}>
+                        Product Description
+                      </label>
+                      <textarea
+                        value={product.description}
+                        onChange={(e) => updateProduct(product.id, 'description', e.target.value)}
+                        className={styles.textarea}
+                        rows="2"
+                        placeholder="Detailed description of the product specifications, materials, requirements..."
+                      />
+                    </div>
+                    
+                    <div className={styles.formRow}>
+                      <div className={styles.formGroup}>
+                        <label className={styles.label}>
+                          Quantity *
+                        </label>
+                        <input
+                          type="text"
+                          value={product.quantity}
+                          onChange={(e) => updateProduct(product.id, 'quantity', e.target.value)}
+                          className={`${styles.input} ${
+                            validationErrors[`product_${product.id}`]?.quantity ? styles.error : ''
+                          }`}
+                          placeholder="e.g., 5,000 units"
+                        />
+                        {validationErrors[`product_${product.id}`]?.quantity && (
+                          <span className={styles.errorMessage}>
+                            {validationErrors[`product_${product.id}`].quantity}
+                          </span>
+                        )}
+                      </div>
+                      
+                      <div className={styles.formGroup}>
+                        <label className={styles.label}>
+                          Product Value *
+                        </label>
+                        <input
+                          type="text"
+                          value={product.value}
+                          onChange={(e) => updateProduct(product.id, 'value', e.target.value)}
+                          className={`${styles.input} ${
+                            validationErrors[`product_${product.id}`]?.value ? styles.error : ''
+                          }`}
+                          placeholder="e.g., €25,000"
+                        />
+                        {validationErrors[`product_${product.id}`]?.value && (
+                          <span className={styles.errorMessage}>
+                            {validationErrors[`product_${product.id}`].value}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className={styles.totalValueSection}>
+              <div className={styles.totalValueCard}>
+                <h3 className={styles.totalValueTitle}>Total Order Value</h3>
+                <div className={styles.totalValueAmount}>
+                  €{calculateTotalValue().toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                </div>
               </div>
             </div>
             

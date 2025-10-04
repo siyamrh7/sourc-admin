@@ -11,6 +11,7 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [editingOrder, setEditingOrder] = useState(null);
   const [showTimelineEdit, setShowTimelineEdit] = useState(false);
+  const [showProductEdit, setShowProductEdit] = useState(false);
 
   // Fetch orders on component mount
   useEffect(() => {
@@ -28,9 +29,12 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
   ];
 
   const filteredOrders = orders.filter(order => {
+    const products = order.products || (order.product ? [order.product] : []);
+    const productNames = products.map(p => p.name).join(' ');
+    
     const matchesSearch = order.orderId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          order.customer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.product?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+                         productNames?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'All' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -60,13 +64,22 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
   };
 
   const handleEditOrder = (order) => {
+    // Handle multiple products - for editing, we'll work with the first product for now
+    // TODO: Implement full multi-product editing UI
+    const products = order.products || (order.product ? [order.product] : []);
+    const firstProduct = products[0] || {};
+    
     setEditingOrder({
       ...order,
-      // Product Information
-      productName: order.product?.name || '',
-      productDescription: order.product?.description || '',
-      productQuantity: order.product?.quantity || '',
-      productValue: order.product?.value || '',
+      // Product Information (using first product for editing)
+      productName: firstProduct.name || '',
+      productDescription: firstProduct.description || '',
+      productQuantity: firstProduct.quantity || '',
+      productValue: firstProduct.value || '',
+      
+      // Store all products for reference
+      products: products,
+      totalValue: order.totalValue || 0,
       
       // Shipping Information
       destination: order.shipping?.destination || '',
@@ -112,16 +125,77 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
     }));
   };
 
+  // Product management functions
+  const addProduct = () => {
+    const newProductId = Math.max(...editingOrder.products.map(p => p.id), 0) + 1;
+    setEditingOrder(prev => ({
+      ...prev,
+      products: [
+        ...prev.products,
+        {
+          id: newProductId,
+          name: '',
+          description: '',
+          quantity: '',
+          value: ''
+        }
+      ]
+    }));
+  };
+
+  const removeProduct = (productId) => {
+    if (editingOrder.products.length > 1) {
+      setEditingOrder(prev => ({
+        ...prev,
+        products: prev.products.filter(product => product.id !== productId)
+      }));
+    }
+  };
+
+  const updateProduct = (productId, field, value) => {
+    setEditingOrder(prev => ({
+      ...prev,
+      products: prev.products.map(product =>
+        product.id === productId ? { ...product, [field]: value } : product
+      )
+    }));
+  };
+
+  // Calculate total order value
+  const calculateTotalValue = () => {
+    return editingOrder.products.reduce((total, product) => {
+      const value = parseFloat(product.value) || 0;
+      return total + value;
+    }, 0);
+  };
+
   const handleSaveChanges = async () => {
     try {
+      // Use all products from the editing state
+      const updatedProducts = editingOrder.products ? [...editingOrder.products] : [];
+      
+      // Filter out products with empty names (incomplete products)
+      const validProducts = updatedProducts.filter(product => 
+        product.name && product.name.trim() && 
+        product.quantity && product.quantity.trim() && 
+        product.value && product.value.trim()
+      );
+
+      if (validProducts.length === 0) {
+        alert('Please add at least one complete product before saving.');
+        return;
+      }
+
+      // Calculate total value
+      const totalValue = validProducts.reduce((total, product) => {
+        const value = parseFloat(product.value) || 0;
+        return total + value;
+      }, 0);
+
       const updatedOrderData = {
         orderId: editingOrder.orderId,
-        product: {
-          name: editingOrder.productName,
-          description: editingOrder.productDescription,
-          quantity: editingOrder.productQuantity,
-          value: editingOrder.productValue
-        },
+        products: validProducts,
+        totalValue: totalValue,
         shipping: {
           destination: editingOrder.destination,
           method: editingOrder.shippingMethod,
@@ -212,54 +286,94 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
           <div className={styles.editGrid}>
             {/* Product Information */}
             <div className={styles.editSection}>
-              <h3 className={styles.editSectionTitle}>Product Information</h3>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Product Name</label>
-                <input
-                  type="text"
-                  name="productName"
-                  value={editingOrder.productName}
-                  onChange={handleInputChange}
-                  className={styles.input}
-                  placeholder="e.g., Custom Injection Parts"
-                />
+              <div className={styles.sectionHeader}>
+                <h3 className={styles.editSectionTitle}>Product Information</h3>
+                <button
+                  type="button"
+                  onClick={addProduct}
+                  className={styles.addProductButton}
+                >
+                  <span className={styles.addIcon}>+</span>
+                  Add Product
+                </button>
               </div>
-              
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Product Description</label>
-                <textarea
-                  name="productDescription"
-                  value={editingOrder.productDescription}
-                  onChange={handleInputChange}
-                  className={styles.textarea}
-                  rows="3"
-                  placeholder="Detailed product description..."
-                />
+
+              <div className={styles.productsList}>
+                {editingOrder.products.map((product, index) => (
+                  <div key={product.id} className={styles.productCard}>
+                    <div className={styles.productHeader}>
+                      <h4 className={styles.productTitle}>
+                        Product {index + 1}
+                        {editingOrder.products.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeProduct(product.id)}
+                            className={styles.removeProductButton}
+                            title="Remove Product"
+                          >
+                            <span className={styles.removeIcon}>×</span>
+                          </button>
+                        )}
+                      </h4>
+                    </div>
+
+                    <div className={styles.productForm}>
+                      <div className={styles.formGroup}>
+                        <label className={styles.label}>Product Name</label>
+                        <input
+                          type="text"
+                          value={product.name}
+                          onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
+                          className={styles.input}
+                          placeholder="e.g., Custom Injection Parts"
+                        />
+                      </div>
+                      
+                      <div className={styles.formGroup}>
+                        <label className={styles.label}>Product Description</label>
+                        <textarea
+                          value={product.description}
+                          onChange={(e) => updateProduct(product.id, 'description', e.target.value)}
+                          className={styles.textarea}
+                          rows="2"
+                          placeholder="Detailed product description..."
+                        />
+                      </div>
+                      
+                      <div className={styles.formRow}>
+                        <div className={styles.formGroup}>
+                          <label className={styles.label}>Quantity</label>
+                          <input
+                            type="text"
+                            value={product.quantity}
+                            onChange={(e) => updateProduct(product.id, 'quantity', e.target.value)}
+                            className={styles.input}
+                            placeholder="e.g., 5,000 units"
+                          />
+                        </div>
+                        
+                        <div className={styles.formGroup}>
+                          <label className={styles.label}>Product Value</label>
+                          <input
+                            type="text"
+                            value={product.value}
+                            onChange={(e) => updateProduct(product.id, 'value', e.target.value)}
+                            className={styles.input}
+                            placeholder="e.g., €25,000"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Quantity</label>
-                  <input
-                    type="text"
-                    name="productQuantity"
-                    value={editingOrder.productQuantity}
-                    onChange={handleInputChange}
-                    className={styles.input}
-                    placeholder="e.g., 5,000 units"
-                  />
-                </div>
-                
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Order Value</label>
-                  <input
-                    type="text"
-                    name="productValue"
-                    value={editingOrder.productValue}
-                    onChange={handleInputChange}
-                    className={styles.input}
-                    placeholder="e.g., €25,000"
-                  />
+
+              <div className={styles.totalValueSection}>
+                <div className={styles.totalValueCard}>
+                  <h4 className={styles.totalValueTitle}>Total Order Value</h4>
+                  <div className={styles.totalValueAmount}>
+                    €{calculateTotalValue().toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  </div>
                 </div>
               </div>
             </div>
@@ -554,11 +668,26 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
             <div className={styles.cardContent}>
               <div className={styles.contentRow}>
                 <span className={styles.contentLabel}>Product:</span>
-                <span className={styles.contentValue}>{order.product?.name}</span>
+                <span className={styles.contentValue}>{(() => {
+                  const products = order.products || (order.product ? [order.product] : []);
+                  const productCount = products.length;
+                  const productNames = products.map(p => p.name).filter(Boolean);
+                  return productCount > 1 ? 
+                    `${productCount} Products: ${productNames.slice(0, 2).join(', ')}${productNames.length > 2 ? '...' : ''}` : 
+                    (productNames[0] || 'N/A');
+                })()}</span>
               </div>
               <div className={styles.contentRow}>
                 <span className={styles.contentLabel}>Quantity:</span>
-                <span className={styles.contentValue}>{order.product?.quantity}</span>
+                <span className={styles.contentValue}>{(() => {
+                  const products = order.products || (order.product ? [order.product] : []);
+                  const productCount = products.length;
+                  const totalQuantity = products.reduce((sum, p) => {
+                    const qty = parseInt(p.quantity) || 0;
+                    return sum + qty;
+                  }, 0);
+                  return productCount > 1 ? `${totalQuantity.toLocaleString()} total` : (products[0]?.quantity || 'N/A');
+                })()}</span>
               </div>
               <div className={styles.contentRow}>
                 <span className={styles.contentLabel}>Progress:</span>
@@ -574,7 +703,7 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
               </div>
               <div className={styles.contentRow}>
                 <span className={styles.contentLabel}>Value:</span>
-                <span className={`${styles.contentValue} ${styles.value}`}>{order.product?.value}</span>
+                <span className={`${styles.contentValue} ${styles.value}`}>{order.totalValue ? `€${order.totalValue.toLocaleString()}` : (order.product?.value || 'N/A')}</span>
               </div>
               <div className={styles.contentRow}>
                 <span className={styles.contentLabel}>Destination:</span>

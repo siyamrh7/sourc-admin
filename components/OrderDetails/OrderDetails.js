@@ -46,11 +46,23 @@ const OrderDetails = ({ orderData = null, onBack }) => {
   };
 
   // Transform real order data into expected format with fallbacks
+  const products = orderData?.products || (orderData?.product ? [orderData.product] : []);
+  const productCount = products.length;
+  const productNames = products.map(p => p.name).filter(Boolean);
+  const totalQuantity = products.reduce((sum, p) => {
+    const qty = parseInt(p.quantity) || 0;
+    return sum + qty;
+  }, 0);
+  
   const transformedOrderData = {
     id: orderData?.orderId || orderData?._id || 'ORD-2024-001',
-    product: orderData?.product?.name || 'Custom Injection Parts',
-    quantity: orderData?.product?.quantity || '5,000 units',
-    value: orderData?.product?.value || '€25,000',
+    customer: orderData?.customer || {},
+    products: products,
+    product: productCount > 1 ? 
+      `${productCount} Products: ${productNames.slice(0, 2).join(', ')}${productNames.length > 2 ? '...' : ''}` : 
+      (productNames[0] || 'Custom Injection Parts'),
+    quantity: productCount > 1 ? `${totalQuantity.toLocaleString()} units total` : (products[0]?.quantity || '5,000 units'),
+    value: orderData?.totalValue ? `€${orderData.totalValue.toLocaleString()}` : (products[0]?.value || '€25,000'),
     estimatedArrival: orderData?.shipping?.estimatedArrival || getEstimatedArrival(),
     shippingMethod: orderData?.shipping?.method || 'Sea Freight',
     destination: orderData?.shipping?.destination || 'Rotterdam, NL',

@@ -84,10 +84,19 @@ const OrderTable = ({ onViewOrderDetails, orders = [], isLoading = false, onRefr
     const currentProgress = order.progress?.current || 1;
     const totalProgress = order.progress?.total || 7;
     
+    // Handle multiple products
+    const products = order.products || (order.product ? [order.product] : []);
+    const productCount = products.length;
+    const productNames = products.map(p => p.name).filter(Boolean);
+    const totalQuantity = products.reduce((sum, p) => {
+      const qty = parseInt(p.quantity) || 0;
+      return sum + qty;
+    }, 0);
+    
     return {
       id: order.orderId || order._id || 'N/A',
-      product: order.product?.name || 'N/A',
-      quantity: order.product?.quantity || 'N/A',
+      product: productCount > 1 ? `${productCount} Products` : '1 Product',
+      quantity: productCount > 1 ? `${totalQuantity.toLocaleString()} units total` : (products[0]?.quantity || 'N/A'),
       orderDate: formatDate(order.createdAt),
       progress: currentProgress,
       total: totalProgress,
@@ -95,7 +104,7 @@ const OrderTable = ({ onViewOrderDetails, orders = [], isLoading = false, onRefr
       status: order.status || 'Unknown',
       statusColor: getStatusColor(order.status),
       destination: order.shipping?.destination || 'N/A',
-      value: order.product?.value || 'N/A'
+      value: order.totalValue ? `€${order.totalValue.toLocaleString()}` : (products[0]?.value || 'N/A')
     };
   };
 

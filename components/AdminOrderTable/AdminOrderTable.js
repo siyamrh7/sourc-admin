@@ -36,6 +36,30 @@ const AdminOrderTable = ({ onViewChange, orders = [], loading = false, onRefresh
     onViewChange('manageOrders', orderId);
   };
 
+  // Helper functions for product display
+  const getProductDisplay = (order) => {
+    const products = order.products || (order.product ? [order.product] : []);
+    const productCount = products.length;
+    const productNames = products.map(p => p.name).filter(Boolean);
+    return productCount > 1 ? 
+      `${productCount} Products: ${productNames.slice(0, 2).join(', ')}${productNames.length > 2 ? '...' : ''}` : 
+      (productNames[0] || 'N/A');
+  };
+
+  const getQuantityDisplay = (order) => {
+    const products = order.products || (order.product ? [order.product] : []);
+    const productCount = products.length;
+    const totalQuantity = products.reduce((sum, p) => {
+      const qty = parseInt(p.quantity) || 0;
+      return sum + qty;
+    }, 0);
+    return productCount > 1 ? `${totalQuantity.toLocaleString()}${window.innerWidth <= 768 ? ' units total' : ' total'}` : (products[0]?.quantity || 'N/A');
+  };
+
+  const getValueDisplay = (order) => {
+    return order.totalValue ? `€${order.totalValue.toLocaleString()}` : (order.product?.value || 'N/A');
+  };
+
   if (loading) {
     return (
       <div className={styles.tableContainer}>
@@ -85,15 +109,15 @@ const AdminOrderTable = ({ onViewChange, orders = [], loading = false, onRefresh
               <div className={styles.mobileContent}>
                 <div className={styles.mobileRow}>
                   <span className={styles.mobileLabel}>Product:</span>
-                  <span>{order.product?.name}</span>
+                  <span>{getProductDisplay(order)}</span>
                 </div>
                 <div className={styles.mobileRow}>
                   <span className={styles.mobileLabel}>Quantity:</span>
-                  <span>{order.product?.quantity}</span>
+                  <span>{getQuantityDisplay(order)}</span>
                 </div>
                 <div className={styles.mobileRow}>
                   <span className={styles.mobileLabel}>Value:</span>
-                  <span className={styles.value}>{order.product?.value}</span>
+                  <span className={styles.value}>{getValueDisplay(order)}</span>
                 </div>
                 <div className={styles.mobileRow}>
                   <span className={styles.mobileLabel}>Priority:</span>
@@ -164,8 +188,8 @@ const AdminOrderTable = ({ onViewChange, orders = [], loading = false, onRefresh
                     <div className={styles.customerEmail}>{order.customer?.email}</div>
                   </div>
                 </td>
-                <td>{order.product?.name}</td>
-                <td>{order.product?.quantity}</td>
+                <td>{getProductDisplay(order)}</td>
+                <td>{getQuantityDisplay(order)}</td>
                 <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                 <td>
                   <div className={styles.progressContainer}>
@@ -188,7 +212,7 @@ const AdminOrderTable = ({ onViewChange, orders = [], loading = false, onRefresh
                     {order.priority || 'Medium'}
                   </span>
                 </td>
-                <td className={styles.value}>{order.product?.value}</td>
+                <td className={styles.value}>{getValueDisplay(order)}</td>
                 <td>
                   <button 
                     className={styles.editButton}
