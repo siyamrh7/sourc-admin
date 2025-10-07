@@ -39,6 +39,14 @@ API.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 && typeof window !== 'undefined') {
+      const url = error.config?.url || '';
+      // Do NOT logout/redirect on password change endpoints; allow UI to show inline error
+      if (
+        url.includes('/customer-auth/change-password') ||
+        url.includes('/customer-auth/change-password-by-email')
+      ) {
+        return Promise.reject(error);
+      }
       const currentPath = window.location.pathname;
       
       // Check if this is a customer-related request
@@ -99,6 +107,7 @@ export const customerAuthAPI = {
   getMe: () => API.get('/customer-auth/me'),
   updateProfile: (profileData) => API.put('/customer-auth/update-profile', profileData),
   changePassword: (passwordData) => API.put('/customer-auth/change-password', passwordData),
+  changePasswordByEmail: (payload) => API.post('/customer-auth/change-password-by-email', payload),
   getMyOrders: (filters) => API.get('/customer-auth/orders', { params: filters }),
   getMyOrder: (orderId) => API.get(`/customer-auth/orders/${orderId}`),
 };

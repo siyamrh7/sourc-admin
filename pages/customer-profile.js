@@ -5,7 +5,7 @@ import Head from 'next/head';
 import styles from '../styles/CustomerProfile.module.css';
 import dashboardStyles from '../styles/CustomerDashboard.module.css';
 import Footer from '../components/Footer/Footer';
-import { logout, getCurrentCustomer } from '../store/actions/customerAuthActions';
+import { logout, getCurrentCustomer ,logoutCustomer} from '../store/actions/customerAuthActions';
 import API, { customerAuthAPI } from '../services/api';
 import loginStyles from '../styles/Login.module.css';
 
@@ -35,6 +35,10 @@ const CustomerProfile = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
+  const [changeEmail, setChangeEmail] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [changeLoading, setChangeLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [address, setAddress] = useState('');
   const [mounted, setMounted] = useState(false);
@@ -61,6 +65,7 @@ const CustomerProfile = () => {
         address: customer.address || {}
       });
       setResetEmail(customer.email || '');
+      setChangeEmail(customer.email || '');
       const oneLine =
         customer.company?.address?.street ||
         [
@@ -158,9 +163,36 @@ const CustomerProfile = () => {
     }
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
-    router.push('/login');
+  const handleChangePasswordByEmail = async () => {
+    try {
+      setChangeLoading(true);
+      setMessage({ type: '', text: '' });
+
+      const payload = { email: changeEmail, currentPassword, newPassword };
+      const { data } = await customerAuthAPI.changePasswordByEmail(payload);
+
+      if (data.success) {
+        setMessage({ type: 'success', text: 'Password updated successfully.' });
+        setCurrentPassword('');
+        setNewPassword('');
+      } else {
+        setMessage({ type: 'error', text: data.message || 'Failed to update password' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: error?.response?.data?.error || 'Failed to update password. Please try again.' });
+    } finally {
+      setChangeLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutCustomer());
+      router.push('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      router.push('/');
+    }
   };
 
   const formatAddress = () => {
@@ -358,6 +390,9 @@ const CustomerProfile = () => {
                           <span className={styles.address}>{formatAddress()}</span>
                         </div>
                         <div className={styles.infoItem}>
+                          <span className={styles.phone}>{profileData.name}</span>
+                        </div>
+                        <div className={styles.infoItem}>
                           <span className={styles.phone}>{profileData.phone}</span>
                         </div>
                         <div className={styles.infoItem}>
@@ -369,7 +404,7 @@ const CustomerProfile = () => {
                 </div>
 
                 {/* Password Reset Section */}
-                <div className={styles.passwordSection}>
+                {/* <div className={styles.passwordSection}>
                   <h2 className={styles.sectionTitle}>Reset password</h2>
                   <p className={styles.resetDescription}>
                     You&apos;ll receive an email to reset your password.
@@ -389,6 +424,44 @@ const CustomerProfile = () => {
                       disabled={resetLoading || !resetEmail}
                     >
                       {resetLoading ? 'SENDING...' : 'SEND'}
+                    </button>
+                  </div>
+                </div> */}
+
+                {/* Change Password Section */}
+                <div className={styles.passwordSection}>
+                  <h2 className={styles.sectionTitle}>Change password</h2>
+                  <p className={styles.resetDescription}>
+                    Change your password using your email, current password and new password.
+                  </p>
+                  <div className={styles.resetForm}>
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      value={changeEmail}
+                      onChange={(e) => setChangeEmail(e.target.value)}
+                      className={styles.emailInput}
+                    />
+                    <input
+                      type="password"
+                      placeholder="Current password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      className={styles.emailInput}
+                    />
+                    <input
+                      type="password"
+                      placeholder="New password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className={styles.emailInput}
+                    />
+                    <button 
+                      className={styles.sendButton}
+                      onClick={handleChangePasswordByEmail}
+                      disabled={changeLoading || !changeEmail || !currentPassword || !newPassword}
+                    >
+                      {changeLoading ? 'UPDATING...' : 'UPDATE PASSWORD'}
                     </button>
                   </div>
                 </div>

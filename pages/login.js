@@ -200,11 +200,11 @@ export default function Login() {
                   {isSubmitting || isLoading ? 'Logging in...' : 'Log in'}
                 </button>
 
-                <div className={styles.forgotPassword}>
+                {/* <div className={styles.forgotPassword}>
                   <Link href="#" className={styles.forgotLink}>
                     Forgot password?
                   </Link>
-                </div>
+                </div> */}
               </form>
             </div>
           </div>
