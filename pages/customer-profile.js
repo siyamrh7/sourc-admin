@@ -20,7 +20,8 @@ const CustomerProfile = () => {
     email: '',
     phone: '',
     company: {
-      name: ''
+      name: '',
+      kvk: ''
     },
     address: {
       street: '',
@@ -49,35 +50,43 @@ const CustomerProfile = () => {
   }, []);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
+    const checkAuthentication = async () => {
+      if (!isAuthenticated) {
+        router.push('/login');
+        return;
+      }
+      
+      try {
+        // Fetch fresh customer data from backend
+        await dispatch(getCurrentCustomer());
+      } catch (error) {
+        router.push('/login');
+      }
+    };
+    
+    if (mounted) {
+      checkAuthentication();
     }
+  }, [dispatch, router, mounted]);
 
+  useEffect(() => {
     if (customer) {
       setProfileData({
         name: customer.name || '',
         email: customer.email || '',
         phone: customer.phone || '',
         company: {
-          name: customer.company?.name || customer.name || ''
+          name: customer.company?.name || customer.name || '',
+          kvk: customer.company?.kvk || ''
         },
         address: customer.address || {}
       });
       setResetEmail(customer.email || '');
       setChangeEmail(customer.email || '');
-      const oneLine =
-        customer.company?.address?.street ||
-        [
-          customer.address?.street,
-          customer.address?.city,
-          customer.address?.state,
-          customer.address?.postalCode,
-          customer.address?.country
-        ].filter(Boolean).join(', ');
-      setAddress(oneLine || '');
+      // Use fullAddress field from customer
+      setAddress(customer.fullAddress || '');
     }
-  }, [isAuthenticated, customer, router]);
+  }, [customer]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -104,13 +113,12 @@ const CustomerProfile = () => {
       setIsLoading(true);
       setMessage({ type: '', text: '' });
 
-      // Map single-line address to address.street like CustomerCreator
+      // Update customer.fullAddress field
       const payload = {
         ...profileData,
-        // Do NOT send root address; align with admin flows
+        fullAddress: address?.trim() || '',
         company: {
-          ...(profileData.company || {}),
-          ...(address?.trim() ? { address: { street: address.trim() } } : { address: {} })
+          ...(profileData.company || {})
         }
       };
 
@@ -126,12 +134,13 @@ const CustomerProfile = () => {
           email: updated.email || '',
           phone: updated.phone || '',
           company: {
-            name: updated.company?.name || updated.name || ''
+            name: updated.company?.name || updated.name || '',
+            kvk: updated.company?.kvk || ''
           },
           address: updated.address || {}
         });
-        const oneLineUpdated = updated.company?.address?.street || '';
-        setAddress(oneLineUpdated || '');
+        // Use fullAddress from response
+        setAddress(updated.fullAddress || '');
         // Refresh Redux customer state
         dispatch(getCurrentCustomer());
       } else {
@@ -327,6 +336,18 @@ const CustomerProfile = () => {
                             className={styles.input}
                           />
                         </div>
+
+                        <div className={styles.formGroup}>
+                          <label>KVK Number</label>
+                          <input
+                            type="text"
+                            name="company.kvk"
+                            value={profileData.company.kvk}
+                            onChange={handleInputChange}
+                            className={styles.input}
+                            placeholder="Enter KVK number"
+                          />
+                        </div>
                         
                         <div className={styles.formGroup}>
                           <label>Contact Name</label>
@@ -391,6 +412,9 @@ const CustomerProfile = () => {
                         </div>
                         <div className={styles.infoItem}>
                           <span className={styles.phone}>{profileData.name}</span>
+                        </div>
+                        <div className={styles.infoItem}>
+                          <span className={styles.kvk}>kvk: {profileData.company.kvk}</span>
                         </div>
                         <div className={styles.infoItem}>
                           <span className={styles.phone}>{profileData.phone}</span>

@@ -1,5 +1,4 @@
 import styles from './OrderInfoCards.module.css';
-
 // Generate a PDF invoice for the provided order data
 const generateInvoicePdf = async (orderData) => {
   try {
@@ -18,6 +17,19 @@ const generateInvoicePdf = async (orderData) => {
       doc.text(String(text ?? ''), x, y, options);
     };
 
+    const writeWrappedText = (text, x, y, maxWidth, lineHeight = 15) => {
+      const textStr = String(text ?? '');
+      const lines = doc.splitTextToSize(textStr, maxWidth);
+      let currentY = y;
+      
+      lines.forEach(line => {
+        doc.text(line, x, currentY);
+        currentY += lineHeight;
+      });
+      
+      return currentY;
+    };
+
     // Header
     doc.setFontSize(18);
     writeText('Invoice', pageMargin, cursorY);
@@ -32,9 +44,11 @@ const generateInvoicePdf = async (orderData) => {
     doc.setFontSize(12);
     writeText('From:', pageMargin, sectionY);
     doc.setFontSize(10);
-    writeText('Sourc B.V.', pageMargin, sectionY + 20);
-    writeText('Logistics & Manufacturing', pageMargin, sectionY + 40);
-    writeText('support@sourc.com', pageMargin, sectionY + 60);
+    writeText('Sourc. B.V.', pageMargin, sectionY + 15);
+    writeText('Richard Feynmanstraat 22', pageMargin, sectionY + 30);
+    writeText('1341DL Almere', pageMargin, sectionY + 45);
+    writeText('KVK: 97340723', pageMargin, sectionY + 60);
+    writeText('info@sourc.nl', pageMargin, sectionY + 75);
 
     // Bill To section (middle) - moved left
     const billToX = 200;
@@ -42,49 +56,48 @@ const generateInvoicePdf = async (orderData) => {
     writeText('Bill To:', billToX, sectionY);
     doc.setFontSize(10);
     
-    // Customer details (if available) - limit to 3 lines max
-    const customer = orderData.customer || {};
-    let billToY = sectionY + 20;
+    // Customer details from order data
+    const customer = orderData.customer;
+    let billToY = sectionY + 15;
     
-    if (customer.name) {
+    if (customer?.name) {
       writeText(customer.name, billToX, billToY);
-      billToY += 20;
+      billToY += 15;
     }
-    if (customer.email) {
+  
+    if (customer?.email) {
       writeText(`Email: ${customer.email}`, billToX, billToY);
-      billToY += 20;
+      billToY += 15;
     }
-    if (customer.phone) {
+    if (customer?.phone) {
       writeText(`Phone: ${customer.phone}`, billToX, billToY);
-      billToY += 20;
+      billToY += 15;
     }
-    
+    if (customer?.company?.kvk) {
+      writeText(`KVK: ${customer.company.kvk}`, billToX, billToY);
+      billToY += 15;
+    }
+    if (customer?.fullAddress) {
+      const maxAddressWidth = 200; // Maximum width for address text
+      billToY = writeWrappedText(customer.fullAddress, billToX, billToY, maxAddressWidth);
+    }
+   
     // Company details (if available) - limit to 2 lines max
-    const company = customer.company || {};
-    if (company.name) {
-      writeText(`Company: ${company.name}`, billToX, billToY);
-      billToY += 20;
-    }
-    if (company.website) {
-      writeText(`Website: ${company.website}`, billToX, billToY);
-      billToY += 20;
-    }
+  
     
     // Ship To section (right side) - moved left
-    const shipToX = 380;
+    const shipToX = 400;
     doc.setFontSize(12);
     writeText('Ship To:', shipToX, sectionY);
     doc.setFontSize(10);
     
-    let shipToY = sectionY + 20;
-    writeText(orderData.destination || 'N/A', shipToX, shipToY);
-    shipToY += 20;
+    let shipToY = sectionY + 15;
+    const maxDestinationWidth = 150; // Maximum width for destination text
+    const destination = orderData.shipping?.destination || orderData.destination || 'N/A';
+    shipToY = writeWrappedText(destination, shipToX, shipToY, maxDestinationWidth);
+    shipToY += 5; // Small gap after wrapped text
     // writeText(`Method: ${orderData.shippingMethod || 'N/A'}`, shipToX, shipToY);
-    // shipToY += 20;
-    writeText(`Carrier: ${orderData.carrier || 'N/A'}`, shipToX, shipToY);
-    shipToY += 20;
-    writeText(`ETA: ${orderData.estimatedArrival || 'N/A'}`, shipToX, shipToY);
-
+   
     // Calculate the maximum Y position used and set cursorY accordingly
     const maxY = Math.max(billToY, shipToY) + 20; // Add some padding
     cursorY = maxY;
@@ -121,26 +134,30 @@ const generateInvoicePdf = async (orderData) => {
     const finalY = doc.lastAutoTable.finalY || cursorY + 24;
 
     // Totals
-    const totalValue = products.reduce((sum, p) => {
+    const subtotal = products.reduce((sum, p) => {
       const valueNum = typeof p.value === 'number' ? p.value : parseFloat(String(p.value || '0').replace(/[^0-9.\-]/g, '')) || 0;
       return sum + valueNum;
     }, 0);
 
-    const totalsX = 360;
+    const taxRate = 0.21; // 21% tax
+    const taxAmount = subtotal * taxRate;
+    const totalWithTax = subtotal + taxAmount;
+
+    const totalsX = 380;
     let totalsY = finalY + 20;
     doc.setFontSize(10);
     writeText('Subtotal:', totalsX, (totalsY += lineHeight));
-    writeText(`€${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, totalsX + 120, totalsY, { align: 'right' });
-    writeText('Tax (0%):', totalsX, (totalsY += lineHeight));
-    writeText('€0.00', totalsX + 120, totalsY, { align: 'right' });
+    writeText(`€${subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, totalsX + 120, totalsY, { align: 'right' });
+    writeText('Tax (21%):', totalsX, (totalsY += lineHeight));
+    writeText(`€${taxAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, totalsX + 120, totalsY, { align: 'right' });
     doc.setFontSize(12);
     writeText('Total:', totalsX, (totalsY += lineHeight));
-    writeText(`€${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, totalsX + 120, totalsY, { align: 'right' });
+    writeText(`€${totalWithTax.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, totalsX + 120, totalsY, { align: 'right' });
 
     // Footer note
     doc.setFontSize(9);
     writeText('Thank you for your business!', pageMargin, totalsY + 40);
-    writeText('For support, contact support@sourc.com', pageMargin, totalsY + 56);
+    writeText('For support, contact info@sourc.nl', pageMargin, totalsY + 56);
 
     // Save
     const fileName = `Invoice_${orderData.id || 'order'}.pdf`;

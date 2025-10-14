@@ -139,7 +139,7 @@ export default function Login() {
         <main className={styles.main}>
           <div className={styles.loginContainer}>
             <div className={styles.loginCard}>
-              <h1 className={styles.title}>Log in</h1>
+              <h1 className={styles.title}>Admin Log in</h1>
               
               {error && (
                 <div className={styles.errorMessage}>

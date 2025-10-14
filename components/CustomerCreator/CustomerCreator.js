@@ -18,7 +18,8 @@ const CustomerCreator = ({ onBack, onViewChange }) => {
     company: {
       name: '',
       taxId: '',
-      website: ''
+      website: '',
+      kvk: ''
     },
     address: ''
   });
@@ -105,15 +106,12 @@ const CustomerCreator = ({ onBack, onViewChange }) => {
 
     try {
       // Remove confirmPassword from data
-      const { confirmPassword, ...rawData } = formData;
-      // Map single string address to backend company.address.street if provided
+      const { confirmPassword, address, ...rawData } = formData;
+      // Map single string address to fullAddress field
       const customerData = {
         ...rawData,
-        ...(rawData.address?.trim()
-          ? { company: { ...rawData.company, address: { street: rawData.address.trim() } } }
-          : { company: rawData.company })
+        ...(address?.trim() ? { fullAddress: address.trim() } : {})
       };
-      if (!rawData.address?.trim()) delete customerData.address;
       
       const result = await dispatch(createCustomer(customerData));
       
@@ -127,7 +125,7 @@ const CustomerCreator = ({ onBack, onViewChange }) => {
           phone: '',
           customerType: 'business',
           accountStatus: 'active',
-          company: { name: '', taxId: '', website: '' },
+          company: { name: '', taxId: '', website: '', kvk: '' },
           address: ''
         });
         
@@ -342,7 +340,7 @@ const CustomerCreator = ({ onBack, onViewChange }) => {
                 </div>
                 <div className={styles.formGroup}>
                     <label className={styles.label}>
-                      Address
+                      Full Address
                       <input
                         type="text"
                         name="address"
@@ -353,6 +351,19 @@ const CustomerCreator = ({ onBack, onViewChange }) => {
                       />
                     </label>
                   </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>
+                    KVK Number
+                    <input
+                      type="text"
+                      name="company.kvk"
+                      value={formData.company.kvk}
+                      onChange={handleInputChange}
+                      className={styles.input}
+                      placeholder="Enter KVK number"
+                    />
+                  </label>
+                </div>
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label className={styles.label}>

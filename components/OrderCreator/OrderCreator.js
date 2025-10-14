@@ -354,7 +354,12 @@ const OrderCreator = ({ onBack, preselectedCustomerId }) => {
           name: selectedCustomer.name,
           email: selectedCustomer.email,
           phone: selectedCustomer.phone,
-          company: selectedCustomer.company
+          fullAddress: selectedCustomer.fullAddress,
+          company: {
+            name: selectedCustomer.company?.name,
+            kvk: selectedCustomer.company?.kvk,
+            address: selectedCustomer.company?.address
+          }
         },
         products: formData.products.filter(product => 
           product.name.trim() && product.quantity.trim() && product.value.trim()

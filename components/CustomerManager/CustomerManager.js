@@ -3,6 +3,192 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCustomers, deleteCustomer, updateCustomer } from '../../store/actions/customerActions';
 import styles from './CustomerManager.module.css';
 
+const CustomerDetailsModal = ({ 
+  customer, 
+  onClose, 
+  isEditing, 
+  formData, 
+  handleChange, 
+  handleSave, 
+  handleStartEdit, 
+  handleDeleteCustomer, 
+  saving, 
+  setIsEditing,
+  getStatusColor,
+  formatDate,
+  address,
+  setAddress
+}) => (
+  <div className={styles.modalOverlay} onClick={onClose}>
+    <div className={styles.modal} onClick={e => e.stopPropagation()}>
+      <div className={styles.modalHeader}>
+        <h3>{isEditing ? 'Edit Customer' : 'Customer Details'}</h3>
+        <button className={styles.closeButton} onClick={onClose}>×</button>
+      </div>
+      <div className={styles.modalContent}>
+        {isEditing ? (
+          <form className={styles.form} onSubmit={(e) => { e.preventDefault(); handleSave(customer._id); }}>
+            <div className={styles.formGrid}>
+              <div className={styles.formField}>
+                <label>Name</label>
+                <input name="name" className={styles.input} value={formData.name || ''} onChange={handleChange} required />
+              </div>
+              <div className={styles.formField}>
+                <label>Email</label>
+                <input type="email" name="email" className={styles.input} value={formData.email || ''} onChange={handleChange} required />
+              </div>
+              <div className={styles.formField}>
+                <label>Phone</label>
+                <input name="phone" className={styles.input} value={formData.phone || ''} onChange={handleChange} />
+              </div>
+              <div className={styles.formField}>
+                <label>Customer Type</label>
+                <select name="customerType" className={styles.select} value={formData.customerType || 'individual'} onChange={handleChange}>
+                  <option value="individual">Individual</option>
+                  <option value="business">Business</option>
+                </select>
+              </div>
+              <div className={styles.formField}>
+                <label>Account Status</label>
+                <select name="accountStatus" className={styles.select} value={formData.accountStatus || 'active'} onChange={handleChange}>
+                  <option value="active">Active</option>
+                  <option value="suspended">Suspended</option>
+                  <option value="pending">Pending</option>
+                </select>
+              </div>
+              <div className={styles.formField}>
+                <label>Company Name</label>
+                <input name="company.name" className={styles.input} value={formData.company?.name || ''} onChange={handleChange} />
+              </div>
+              <div className={styles.formField}>
+                <label>Company Website</label>
+                <input type="url" name="company.website" className={styles.input} value={formData.company?.website || ''} onChange={handleChange} />
+              </div>
+              <div className={styles.formField}>
+                <label>KVK Number</label>
+                <input name="company.kvk" className={styles.input} value={formData.company?.kvk || ''} onChange={handleChange} placeholder="Enter KVK number" />
+              </div>
+              <div className={styles.formField}>
+                <label>Address</label>
+                <input 
+                  name="address" 
+                  className={styles.input} 
+                  value={address || ''} 
+                  onChange={(e) => setAddress(e.target.value)} 
+                  placeholder="Enter full address" 
+                />
+              </div>
+            </div>
+          </form>
+        ) : (
+          <div className={styles.customerInfo}>
+            <div className={styles.infoRow}>
+              <label>Name:</label>
+              <span>{customer.name}</span>
+            </div>
+            <div className={styles.infoRow}>
+              <label>Email:</label>
+              <span>{customer.email}</span>
+            </div>
+            <div className={styles.infoRow}>
+              <label>Phone:</label>
+              <span>{customer.phone || 'Not provided'}</span>
+            </div>
+            <div className={styles.infoRow}>
+              <label>Customer Type:</label>
+              <span className={styles.capitalize}>{customer.customerType}</span>
+            </div>
+            <div className={styles.infoRow}>
+              <label>Address:</label>
+              <span 
+            
+              >
+                {customer.fullAddress}
+              </span>
+            </div>
+            {customer.company?.name && (
+              <>
+                <div className={styles.infoRow}>
+                  <label>Company:</label>
+                  <span>{customer.company.name}</span>
+                </div>
+                {customer.company.kvk && (
+                  <div className={styles.infoRow}>
+                    <label>KVK:</label>
+                    <span>{customer.company.kvk}</span>
+                  </div>
+                )}
+                {customer.company.website && (
+                  <div className={styles.infoRow}>
+                    <label>Website:</label>
+                    <a href={customer.company.website} target="_blank" rel="noopener noreferrer">
+                      {customer.company.website}
+                    </a>
+                  </div>
+                )}
+              </>
+            )}
+            <div className={styles.infoRow}>
+              <label>Total Orders:</label>
+              <span>{customer.totalOrders || 0}</span>
+            </div>
+            <div className={styles.infoRow}>
+              <label>Total Spent:</label>
+              <span>€{(customer.totalSpent || 0).toLocaleString()}</span>
+            </div>
+            <div className={styles.infoRow}>
+              <label>Member Since:</label>
+              <span>{formatDate(customer.createdAt)}</span>
+            </div>
+            {customer.lastLoginDate && (
+              <div className={styles.infoRow}>
+                <label>Last Login:</label>
+                <span>{formatDate(customer.lastLoginDate)}</span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+      <div className={styles.modalActions}>
+        {isEditing ? (
+          <>
+            <button 
+              className={styles.editButton}
+              onClick={() => handleSave(customer._id)}
+              disabled={saving}
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+            <button 
+              className={styles.viewButton}
+              onClick={() => setIsEditing(false)}
+              disabled={saving}
+            >
+              Cancel
+            </button>
+          </>
+        ) : (
+          <button 
+            className={styles.editButton}
+            onClick={() => handleStartEdit(customer)}
+          >
+            Edit Customer
+          </button>
+        )}
+        <button 
+          className={styles.deleteButton}
+          onClick={() => {
+            handleDeleteCustomer(customer._id);
+            onClose();
+          }}
+        >
+          Delete Customer
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
 const CustomerManager = ({ onBack, onViewChange }) => {
   const dispatch = useDispatch();
   const { customers, loading } = useSelector(state => state.customers);
@@ -14,6 +200,7 @@ const CustomerManager = ({ onBack, onViewChange }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [saving, setSaving] = useState(false);
+  const [address, setAddress] = useState('');
 
   useEffect(() => {
     dispatch(fetchCustomers());
@@ -63,16 +250,12 @@ const CustomerManager = ({ onBack, onViewChange }) => {
       accountStatus: customer.accountStatus || 'active',
       company: {
         name: customer.company?.name || '',
-        website: customer.company?.website || ''
-      },
-      address: customer.fullAddress || [
-        customer.company?.address?.street,
-        customer.company?.address?.city,
-        customer.company?.address?.state,
-        customer.company?.address?.zipCode,
-        customer.company?.address?.country
-      ].filter(Boolean).join(', ')
+        website: customer.company?.website || '',
+        kvk: customer.company?.kvk || ''
+      }
     });
+    // Set address separately like in customer-profile.js
+    setAddress(customer.fullAddress || '');
   };
 
   const handleChange = (e) => {
@@ -83,8 +266,6 @@ const CustomerManager = ({ onBack, onViewChange }) => {
         ...prev,
         company: { ...prev.company, [key]: value }
       }));
-    } else if (name === 'address') {
-      setFormData(prev => ({ ...prev, address: value }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -95,23 +276,11 @@ const CustomerManager = ({ onBack, onViewChange }) => {
       setSaving(true);
       const payload = {
         ...formData,
+        fullAddress: address?.trim() || '',
       };
       // Clean empty nested company fields
       if (payload.company && !payload.company.name && !payload.company.website) {
         delete payload.company;
-      }
-      // Map single-line address to backend structure: company.address.street
-      if (typeof payload.address === 'string') {
-        const trimmed = payload.address.trim();
-        if (trimmed) {
-          payload.company = {
-            ...(payload.company || {}),
-            address: {
-              street: trimmed
-            }
-          };
-        }
-        delete payload.address;
       }
       const result = await dispatch(updateCustomer(customerId, payload));
       if (result?.success) {
@@ -124,161 +293,6 @@ const CustomerManager = ({ onBack, onViewChange }) => {
     }
   };
 
-  const CustomerDetailsModal = ({ customer, onClose }) => (
-    <div className={styles.modalOverlay} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
-        <div className={styles.modalHeader}>
-          <h3>{isEditing ? 'Edit Customer' : 'Customer Details'}</h3>
-          <button className={styles.closeButton} onClick={onClose}>×</button>
-        </div>
-        <div className={styles.modalContent}>
-          {isEditing ? (
-            <form className={styles.form} onSubmit={(e) => { e.preventDefault(); handleSave(customer._id); }}>
-              <div className={styles.formGrid}>
-                <div className={styles.formField}>
-                  <label>Name</label>
-                  <input name="name" className={styles.input} value={formData.name || ''} onChange={handleChange} required />
-                </div>
-                <div className={styles.formField}>
-                  <label>Email</label>
-                  <input type="email" name="email" className={styles.input} value={formData.email || ''} onChange={handleChange} required />
-                </div>
-                <div className={styles.formField}>
-                  <label>Phone</label>
-                  <input name="phone" className={styles.input} value={formData.phone || ''} onChange={handleChange} />
-                </div>
-                <div className={styles.formField}>
-                  <label>Customer Type</label>
-                  <select name="customerType" className={styles.select} value={formData.customerType || 'individual'} onChange={handleChange}>
-                    <option value="individual">Individual</option>
-                    <option value="business">Business</option>
-                  </select>
-                </div>
-                <div className={styles.formField}>
-                  <label>Account Status</label>
-                  <select name="accountStatus" className={styles.select} value={formData.accountStatus || 'active'} onChange={handleChange}>
-                    <option value="active">Active</option>
-                    <option value="suspended">Suspended</option>
-                    <option value="pending">Pending</option>
-                  </select>
-                </div>
-                <div className={styles.formField}>
-                  <label>Company Name</label>
-                  <input name="company.name" className={styles.input} value={formData.company?.name || ''} onChange={handleChange} />
-                </div>
-                <div className={styles.formField}>
-                  <label>Company Website</label>
-                  <input type="url" name="company.website" className={styles.input} value={formData.company?.website || ''} onChange={handleChange} />
-                </div>
-                <div className={styles.formField}>
-                  <label>Address</label>
-                  <input name="address" className={styles.input} value={formData.address || ''} onChange={handleChange} placeholder="Enter full address" />
-                </div>
-              </div>
-            </form>
-          ) : (
-            <div className={styles.customerInfo}>
-              <div className={styles.infoRow}>
-                <label>Name:</label>
-                <span>{customer.name}</span>
-              </div>
-              <div className={styles.infoRow}>
-                <label>Email:</label>
-                <span>{customer.email}</span>
-              </div>
-              <div className={styles.infoRow}>
-                <label>Phone:</label>
-                <span>{customer.phone || 'Not provided'}</span>
-              </div>
-              <div className={styles.infoRow}>
-                <label>Customer Type:</label>
-                <span className={styles.capitalize}>{customer.customerType}</span>
-              </div>
-              <div className={styles.infoRow}>
-                <label>Account Status:</label>
-                <span 
-                  className={styles.status}
-                  style={{ color: getStatusColor(customer.accountStatus) }}
-                >
-                  {customer.accountStatus}
-                </span>
-              </div>
-              {customer.company?.name && (
-                <>
-                  <div className={styles.infoRow}>
-                    <label>Company:</label>
-                    <span>{customer.company.name}</span>
-                  </div>
-                  {customer.company.website && (
-                    <div className={styles.infoRow}>
-                      <label>Website:</label>
-                      <a href={customer.company.website} target="_blank" rel="noopener noreferrer">
-                        {customer.company.website}
-                      </a>
-                    </div>
-                  )}
-                </>
-              )}
-              <div className={styles.infoRow}>
-                <label>Total Orders:</label>
-                <span>{customer.totalOrders || 0}</span>
-              </div>
-              <div className={styles.infoRow}>
-                <label>Total Spent:</label>
-                <span>€{(customer.totalSpent || 0).toLocaleString()}</span>
-              </div>
-              <div className={styles.infoRow}>
-                <label>Member Since:</label>
-                <span>{formatDate(customer.createdAt)}</span>
-              </div>
-              {customer.lastLoginDate && (
-                <div className={styles.infoRow}>
-                  <label>Last Login:</label>
-                  <span>{formatDate(customer.lastLoginDate)}</span>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-        <div className={styles.modalActions}>
-          {isEditing ? (
-            <>
-              <button 
-                className={styles.editButton}
-                onClick={() => handleSave(customer._id)}
-                disabled={saving}
-              >
-                {saving ? 'Saving...' : 'Save Changes'}
-              </button>
-              <button 
-                className={styles.viewButton}
-                onClick={() => setIsEditing(false)}
-                disabled={saving}
-              >
-                Cancel
-              </button>
-            </>
-          ) : (
-            <button 
-              className={styles.editButton}
-              onClick={() => handleStartEdit(customer)}
-            >
-              Edit Customer
-            </button>
-          )}
-          <button 
-            className={styles.deleteButton}
-            onClick={() => {
-              handleDeleteCustomer(customer._id);
-              onClose();
-            }}
-          >
-            Delete Customer
-          </button>
-        </div>
-      </div>
-    </div>
-  );
 
   if (loading.customers && !customers.length) {
     return (
@@ -422,7 +436,20 @@ const CustomerManager = ({ onBack, onViewChange }) => {
             setSelectedCustomer(null);
             setIsEditing(false);
             setFormData({});
+            setAddress('');
           }}
+          isEditing={isEditing}
+          formData={formData}
+          handleChange={handleChange}
+          handleSave={handleSave}
+          handleStartEdit={handleStartEdit}
+          handleDeleteCustomer={handleDeleteCustomer}
+          saving={saving}
+          setIsEditing={setIsEditing}
+          getStatusColor={getStatusColor}
+          formatDate={formatDate}
+          address={address}
+          setAddress={setAddress}
         />
       )}
     </div>

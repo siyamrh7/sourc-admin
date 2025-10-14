@@ -36,6 +36,33 @@
   background: #b91c1c;
 }
 
+.refreshButton {
+  background: #6b7280;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 0.875rem;
+}
+
+.refreshButton:hover {
+  background: #4b5563;
+}
+
+.refreshButton:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.headerActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .tableWrapper {
   overflow-x: auto;
 }
@@ -206,6 +233,33 @@
   color: #111827;
 }
 
+.actionButtons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.invoiceButton {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.invoiceButton:hover {
+  background: #2563eb;
+}
+
 /* Mobile Styles */
 .mobileContainer {
   display: flex;
@@ -283,6 +337,22 @@
 
 .mobileEditButton:hover {
   background: #b91c1c;
+}
+
+.mobileInvoiceButton {
+  flex: 1;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mobileInvoiceButton:hover {
+  background: #2563eb;
 }
 
 @media (max-width: 768px) {
