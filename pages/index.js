@@ -219,7 +219,7 @@ export default function CustomerLogin() {
                 </nav>
                 <div className={styles.contact}>
                   <div className={styles.contactItem}><img src="icons/phone.svg" alt="Phone" /><span>+31 9701281543</span></div>
-                  <div className={styles.contactItem}><img src="icons/mail.svg" alt="Email" /><span>contact@sourc.nl</span></div>
+                  <div className={styles.contactItem}><img src="icons/mail.svg" alt="Email" /><span>info@sourc.nl</span></div>
                 </div>
               </div>
               <div className={styles.footerRight}>

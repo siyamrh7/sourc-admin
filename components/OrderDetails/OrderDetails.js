@@ -62,7 +62,9 @@ const OrderDetails = ({ orderData = null, onBack }) => {
       `${productCount} Products: ${productNames.slice(0, 2).join(', ')}${productNames.length > 2 ? '...' : ''}` : 
       (productNames[0] || 'Custom Injection Parts'),
     quantity: productCount > 1 ? `${totalQuantity.toLocaleString()} units total` : (products[0]?.quantity || '5,000 units'),
-    value: orderData?.totalValue ? `€${orderData.totalValue.toLocaleString()}` : (products[0]?.value || '€25,000'),
+    value: orderData?.totalValue
+      ? new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(orderData.totalValue)
+      : (products[0]?.value || '€25,000'),
     estimatedArrival: orderData?.shipping?.estimatedArrival || getEstimatedArrival(),
     shippingMethod: orderData?.shipping?.method || 'Sea Freight',
     destination: orderData?.shipping?.destination || 'Rotterdam, NL',

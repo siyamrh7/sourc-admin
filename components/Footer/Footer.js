@@ -24,7 +24,7 @@ const Footer = () => {
               </div>
               <div className={styles.contactItem}>
                 <img src="icons/mail.svg" alt="Email" />
-                <span>contact@sourc.nl</span>
+                <span>info@sourc.nl</span>
               </div>
             </div>
           </div>

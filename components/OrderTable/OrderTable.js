@@ -104,7 +104,9 @@ const OrderTable = ({ onViewOrderDetails, orders = [], isLoading = false, onRefr
       status: order.status || 'Unknown',
       statusColor: getStatusColor(order.status),
       destination: order.shipping?.destination || 'N/A',
-      value: order.totalValue ? `€${order.totalValue.toLocaleString()}` : (products[0]?.value || 'N/A')
+      value: order.totalValue
+        ? new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2, minimumFractionDigits: 0 }).format(order.totalValue)
+        : (products[0]?.value || 'N/A')
     };
   };
 

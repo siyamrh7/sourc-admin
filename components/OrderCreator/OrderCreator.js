@@ -600,7 +600,9 @@ const OrderCreator = ({ onBack, preselectedCustomerId }) => {
               <div className={styles.totalValueCard}>
                 <h3 className={styles.totalValueTitle}>Total Order Value</h3>
                 <div className={styles.totalValueAmount}>
-                  €{calculateTotalValue().toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  {new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(
+                    calculateTotalValue()
+                  )}
                 </div>
               </div>
             </div>

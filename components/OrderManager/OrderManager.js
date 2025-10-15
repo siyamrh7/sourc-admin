@@ -372,7 +372,9 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
                 <div className={styles.totalValueCard}>
                   <h4 className={styles.totalValueTitle}>Total Order Value</h4>
                   <div className={styles.totalValueAmount}>
-                    €{calculateTotalValue().toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    {new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(
+                      calculateTotalValue()
+                    )}
                   </div>
                 </div>
               </div>

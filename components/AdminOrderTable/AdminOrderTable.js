@@ -115,8 +115,8 @@ const generateInvoicePdf = async (orderData) => {
         p.name || '-',
         p.description || '-',
         quantity.toLocaleString(),
-        `€${unitPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
-        `€${valueNum.toLocaleString(undefined, { minimumFractionDigits: 2 })}`
+        new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(unitPrice),
+        new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(valueNum)
       ];
     });
 
@@ -146,12 +146,12 @@ const generateInvoicePdf = async (orderData) => {
     let totalsY = finalY + 20;
     doc.setFontSize(10);
     writeText('Subtotal:', totalsX, (totalsY += lineHeight));
-    writeText(`€${subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, totalsX + 120, totalsY, { align: 'right' });
+    writeText(new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(subtotal), totalsX + 120, totalsY, { align: 'right' });
     writeText('Tax (21%):', totalsX, (totalsY += lineHeight));
-    writeText(`€${taxAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, totalsX + 120, totalsY, { align: 'right' });
+    writeText(new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(taxAmount), totalsX + 120, totalsY, { align: 'right' });
     doc.setFontSize(12);
     writeText('Total:', totalsX, (totalsY += lineHeight));
-    writeText(`€${totalWithTax.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, totalsX + 120, totalsY, { align: 'right' });
+    writeText(new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(totalWithTax), totalsX + 120, totalsY, { align: 'right' });
 
     // Footer note
     doc.setFontSize(9);
@@ -223,7 +223,7 @@ const AdminOrderTable = ({ onViewChange, orders = [], loading = false, onRefresh
   };
 
   const getValueDisplay = (order) => {
-    return order.totalValue ? `€${order.totalValue.toLocaleString()}` : (order.product?.value || 'N/A');
+    return order.totalValue ? new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(order.totalValue) : (order.product?.value || 'N/A');
   };
 
   if (loading) {
