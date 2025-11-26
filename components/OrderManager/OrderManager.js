@@ -20,12 +20,12 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
 
   const phases = [
     'Offer Accepted',
-    'Mold / Product in Development',
+    'In Development',
     'Sample Sent to Client',
     'Sample Approved',
     'Production Phase',
     'Transport Phase',
-    'Delivered to Final Location'
+    'Delivered'
   ];
 
   const filteredOrders = orders.filter(order => {

@@ -51,7 +51,7 @@ const OrderCreator = ({ onBack, preselectedCustomerId }) => {
       },
       {
         id: 2,
-        title: 'Mold / Product in Development',
+        title: 'In Development',
         description: 'Product or mold is being created.',
         estimatedDuration: '14 days',
         startDate: '',
@@ -111,7 +111,7 @@ const OrderCreator = ({ onBack, preselectedCustomerId }) => {
       },
       {
         id: 7,
-        title: 'Delivered to Final Location',
+        title: 'Delivered',
         description: 'Order has been delivered to the specified location.',
         estimatedDuration: '1 day',
         startDate: '',

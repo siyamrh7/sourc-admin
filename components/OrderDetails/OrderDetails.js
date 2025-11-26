@@ -88,7 +88,7 @@ const OrderDetails = ({ orderData = null, onBack }) => {
     },
     {
       id: 2,
-      title: 'Mold / Product in Development',
+      title: 'In Development',
       description: 'Product or mold is being created.',
       estimatedDuration: '14 days',
       startDate: '6/21/2024',
@@ -153,7 +153,7 @@ const OrderDetails = ({ orderData = null, onBack }) => {
     },
     {
       id: 7,
-      title: 'Delivered to Final Location',
+      title: 'Delivered',
       description: 'Order has been delivered to the specified location.',
       estimatedDuration: '',
       startDate: '',
