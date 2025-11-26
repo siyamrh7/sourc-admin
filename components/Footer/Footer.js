@@ -20,7 +20,7 @@ const Footer = () => {
             <div className={styles.contact}>
               <div className={styles.contactItem}>
                 <img src="icons/phone.svg" alt="Phone" />
-                <span>+31 9701281543</span>
+                <span>+31 683200963</span>
               </div>
               <div className={styles.contactItem}>
                 <img src="icons/mail.svg" alt="Email" />

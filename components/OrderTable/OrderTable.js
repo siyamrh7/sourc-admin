@@ -66,7 +66,7 @@ const OrderTable = ({ onViewOrderDetails, orders = [], isLoading = false, onRefr
     // Final fallback based on status
     switch (order.status?.toLowerCase()) {
       case 'development':
-        return 'Mold / Product in Development';
+        return 'In Development';
       case 'in progress':
         return 'Sample Approved';
       case 'production':
@@ -74,7 +74,7 @@ const OrderTable = ({ onViewOrderDetails, orders = [], isLoading = false, onRefr
       case 'shipped':
         return 'Transport Phase';
       case 'delivered':
-        return 'Delivered to Final Location';
+        return 'Delivered';
       default:
         return 'Offer Accepted';
     }
