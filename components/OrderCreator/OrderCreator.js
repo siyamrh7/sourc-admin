@@ -29,6 +29,10 @@ const OrderCreator = ({ onBack, preselectedCustomerId }) => {
     carrier: '',
     estimatedArrival: '',
     
+    // Customer Location Information
+    customerLocation: '',
+    customerLocationArrivalDate: '',
+    
     // Order Management
     priority: 'Medium',
     status: 'Development',
@@ -371,6 +375,8 @@ const OrderCreator = ({ onBack, preselectedCustomerId }) => {
           carrier: formData.carrier,
           estimatedArrival: formData.estimatedArrival
         },
+        customerLocation: formData.customerLocation,
+        customerLocationArrivalDate: formData.customerLocationArrivalDate,
         status: formData.status,
         priority: formData.priority,
         notes: formData.notes,
@@ -722,6 +728,39 @@ const OrderCreator = ({ onBack, preselectedCustomerId }) => {
               <small className={styles.helpText}>
                 Auto-calculated based on timeline, but can be manually adjusted
               </small>
+            </div>
+          </div>
+
+          {/* Customer Location Information */}
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>Customer Location Information</h2>
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="customerLocation">
+                Customer Location
+              </label>
+              <input
+                type="text"
+                id="customerLocation"
+                name="customerLocation"
+                value={formData.customerLocation}
+                onChange={handleInputChange}
+                className={styles.input}
+                placeholder="e.g., Amsterdam, Netherlands"
+              />
+            </div>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="customerLocationArrivalDate">
+                Customer Location Arrival Date
+              </label>
+              <input
+                type="date"
+                id="customerLocationArrivalDate"
+                name="customerLocationArrivalDate"
+                value={formData.customerLocationArrivalDate}
+                onChange={handleInputChange}
+                className={styles.input}
+              />
             </div>
           </div>
 

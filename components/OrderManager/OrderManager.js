@@ -87,6 +87,10 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
       carrier: order.shipping?.carrier || '',
       estimatedArrival: formatDate(order.shipping?.estimatedArrival) || '',
       
+      // Customer Location Information
+      customerLocation: order.customerLocation || '',
+      customerLocationArrivalDate: formatDate(order.customerLocationArrivalDate) || '',
+      
       // Order Management
       status: order.status || 'Development',
       priority: order.priority || 'Medium',
@@ -202,6 +206,8 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
           carrier: editingOrder.carrier,
           estimatedArrival: editingOrder.estimatedArrival
         },
+        customerLocation: editingOrder.customerLocation,
+        customerLocationArrivalDate: editingOrder.customerLocationArrivalDate,
         status: editingOrder.status,
         priority: editingOrder.priority,
         notes: editingOrder.notes,
@@ -430,6 +436,33 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
                   type="date"
                   name="estimatedArrival"
                   value={editingOrder.estimatedArrival}
+                  onChange={handleInputChange}
+                  className={styles.input}
+                />
+              </div>
+            </div>
+
+            {/* Customer Location Information */}
+            <div className={styles.editSection}>
+              <h3 className={styles.editSectionTitle}>Customer Location Information</h3>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Customer Location</label>
+                <input
+                  type="text"
+                  name="customerLocation"
+                  value={editingOrder.customerLocation}
+                  onChange={handleInputChange}
+                  className={styles.input}
+                  placeholder="e.g., Amsterdam, Netherlands"
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Customer Location Arrival Date</label>
+                <input
+                  type="date"
+                  name="customerLocationArrivalDate"
+                  value={editingOrder.customerLocationArrivalDate}
                   onChange={handleInputChange}
                   className={styles.input}
                 />
@@ -710,6 +743,18 @@ const OrderManager = ({ selectedOrderId, onBack, onSelectOrder }) => {
               <div className={styles.contentRow}>
                 <span className={styles.contentLabel}>Destination:</span>
                 <span className={styles.contentValue}>{order.shipping?.destination}</span>
+              </div>
+              <div className={styles.contentRow}>
+                <span className={styles.contentLabel}>Customer Location:</span>
+                <span className={styles.contentValue}>{order.customerLocation || 'N/A'}</span>
+              </div>
+              <div className={styles.contentRow}>
+                <span className={styles.contentLabel}>Customer Location Arrival:</span>
+                <span className={styles.contentValue}>
+                  {order.customerLocationArrivalDate 
+                    ? formatDate(order.customerLocationArrivalDate) 
+                    : 'N/A'}
+                </span>
               </div>
             </div>
 

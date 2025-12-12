@@ -68,7 +68,9 @@ const OrderDetails = ({ orderData = null, onBack }) => {
     estimatedArrival: orderData?.shipping?.estimatedArrival || getEstimatedArrival(),
     shippingMethod: orderData?.shipping?.method || 'Sea Freight',
     destination: orderData?.shipping?.destination || 'Rotterdam, NL',
-    carrier: orderData?.shipping?.carrier || getDefaultCarrier(orderData?.shipping?.method || 'Sea Freight')
+    carrier: orderData?.shipping?.carrier || getDefaultCarrier(orderData?.shipping?.method || 'Sea Freight'),
+    customerLocation: orderData?.customerLocation || '',
+    customerLocationArrivalDate: orderData?.customerLocationArrivalDate ? formatDate(orderData.customerLocationArrivalDate) : ''
   };
 
   // Default timeline data (preserving current static data)

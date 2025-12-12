@@ -218,6 +218,14 @@ const OrderInfoCards = ({ orderData }) => {
             <span className={styles.label}>Carrier:</span>
             <span className={styles.value}>{orderData.carrier}</span>
           </div>
+          <div className={styles.infoRow}>
+            <span className={styles.label}>Customer Location:</span>
+            <span className={styles.value}>{orderData.customerLocation || 'N/A'}</span>
+          </div>
+          <div className={styles.infoRow}>
+            <span className={styles.label}>Customer Location Arrival:</span>
+            <span className={styles.value}>{orderData.customerLocationArrivalDate || 'N/A'}</span>
+          </div>
         </div>
       </div>
 
